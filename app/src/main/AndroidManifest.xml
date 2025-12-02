@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!-- Camera Permission -->
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
+    <uses-permission android:name="android.permission.CAMERA" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -10,16 +14,46 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.FurBloomAppMSD">
+        android:theme="@style/Theme.FurBloomAppMSD"
+        tools:targetApi="31">
+
+        <!-- Main Activity (List Screen) -->
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTop">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Add/Edit Reminder Activity (Input Screen) -->
+        <activity
+            android:name=".AddEditReminderActivity"
+            android:parentActivityName=".MainActivity"
+            android:exported="false" />
+
+        <!-- Recycling List Activity (Completed Reminders) -->
+        <activity
+            android:name=".RecyclingListActivity"
+            android:parentActivityName=".MainActivity"
+            android:exported="false" />
+
+        <!-- Settings Activity (Extra Screen with Camera) -->
+        <activity
+            android:name=".SettingsActivity"
+            android:parentActivityName=".MainActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".MyPetsActivity"
+            android:parentActivityName=".MainActivity"
+            android:exported="false" />
+
+
+
+
     </application>
 
 </manifest>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="24dp"
+    android:background="#FFE4F0">
+
+    <ImageView
+        android:id="@+id/iv_pet_photo"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/ic_pet"
+        android:contentDescription="Pet Photo"
+        android:layout_gravity="center"
+        android:scaleType="centerCrop"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/circle_background"/>
+
+    <Button
+        android:id="@+id/btn_take_photo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Take Photo"
+        android:layout_marginBottom="8dp"/>
+
+    <Button
+        android:id="@+id/btn_clear_data"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Clear Data"/>
+</LinearLayout>
