@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+
+    <!-- Circle background -->
+    <path
+        android:fillColor="#FFC107"
+        android:pathData="M32,0
+            A32,32 0 1,1 31.999,0z" />
+
+    <!-- Paw circles -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M20,20
+            a4,4 0 1,0 8,0
+            a4,4 0 1,0 -8,0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M36,20
+            a4,4 0 1,0 8,0
+            a4,4 0 1,0 -8,0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,28
+            a4,4 0 1,0 8,0
+            a4,4 0 1,0 -8,0" />
+
+    <!-- Paw pad -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M28,36
+            a8,6 0 1,0 8,0
+            a8,6 0 1,0 -8,0" />
+</vector>

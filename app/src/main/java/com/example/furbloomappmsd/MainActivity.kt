@@ -39,6 +39,38 @@ class MainActivity : AppCompatActivity() {
         tvNextReminder = findViewById(R.id.tv_next_reminder)
         tvNextReminderTime = findViewById(R.id.tv_next_reminder_time)
 
+        // Observe today's reminders
+        viewModel.pendingReminders.observe(this) { reminders ->
+
+            val today = Calendar.getInstance()
+            today.set(Calendar.HOUR_OF_DAY, 0)
+            today.set(Calendar.MINUTE, 0)
+            today.set(Calendar.SECOND, 0)
+            val startOfDay = today.timeInMillis
+
+            today.set(Calendar.HOUR_OF_DAY, 23)
+            today.set(Calendar.MINUTE, 59)
+            today.set(Calendar.SECOND, 59)
+            val endOfDay = today.timeInMillis
+
+            val todayReminders = reminders.filter { it.dateTime in startOfDay..endOfDay }
+            adapter.submitList(todayReminders)
+
+            if (todayReminders.isNotEmpty()) {
+                // Show the next reminder
+                val nextReminder = todayReminders.first()
+                tvNextReminder.text = nextReminder.description
+                val timeFormat = SimpleDateFormat("'Today at' h:mm a", Locale.getDefault())
+                tvNextReminderTime.text = timeFormat.format(Date(nextReminder.dateTime))
+            } else {
+                // No reminders today → show "Done for the Day!"
+                tvNextReminder.text = "Done for the Day!"
+                tvNextReminderTime.text = ""
+            }
+
+            cardReminder.visibility = View.VISIBLE
+        }
+
         // Setup RecyclerView for Daily List
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView_daily_list)
         adapter = ReminderAdapter(
@@ -58,7 +90,6 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        // Observe today's reminders
         viewModel.pendingReminders.observe(this) { reminders ->
             // Filter today's reminders
             val today = Calendar.getInstance()
@@ -75,17 +106,22 @@ class MainActivity : AppCompatActivity() {
             val todayReminders = reminders.filter { it.dateTime in startOfDay..endOfDay }
             adapter.submitList(todayReminders)
 
-            // Show next upcoming reminder
-            if (reminders.isNotEmpty()) {
-                val nextReminder = reminders.first()
+            if (todayReminders.isNotEmpty()) {
+                // Show the next upcoming reminder
+                val nextReminder = todayReminders.first()
                 tvNextReminder.text = nextReminder.description
                 val timeFormat = SimpleDateFormat("'Today at' h:mm a", Locale.getDefault())
                 tvNextReminderTime.text = timeFormat.format(Date(nextReminder.dateTime))
-                cardReminder.visibility = View.VISIBLE
             } else {
-                cardReminder.visibility = View.GONE
+                // No reminders → show "Done for the Day!"
+                tvNextReminder.text = "✅ Done for the Day!"
+                tvNextReminderTime.text = ""
             }
+
+            // Always make the card visible
+            cardReminder.visibility = View.VISIBLE
         }
+
 
         // Navigation buttons
         findViewById<MaterialCardView>(R.id.btn_my_pets).setOnClickListener {
