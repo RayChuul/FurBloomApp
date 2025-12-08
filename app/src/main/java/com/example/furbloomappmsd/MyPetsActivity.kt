@@ -60,10 +60,14 @@ class MyPetsActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
         val layoutManager = GridLayoutManager(this, 2)
+
+        // === THE DEFINITIVE UI FIX ===
+        // FIXED: The logic inside getSpanSize was incorrect.
+        // We now return '1' for all items, ensuring that both the pet cards
+        // and the "Add Pet" button occupy a single column, making them the same size.
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
-                // The ADD_BUTTON_VIEW_TYPE is 2. If the item type is the add button, span 2 columns.
-                return if (adapter.getItemViewType(position) == 2) 2 else 1
+                return 1 // All items should take up 1 span.
             }
         }
         recyclerView.layoutManager = layoutManager

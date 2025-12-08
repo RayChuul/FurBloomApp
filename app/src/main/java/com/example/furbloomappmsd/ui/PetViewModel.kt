@@ -25,7 +25,6 @@ class PetViewModel(private val repository: PetRepository) : ViewModel() {
         }
     }
 
-    // ADD THIS FUNCTION
     fun deletePet(pet: Pet) {
         viewModelScope.launch {
             repository.deletePet(pet)

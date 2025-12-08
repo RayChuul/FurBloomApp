@@ -1,5 +1,5 @@
-package com.example.furbloomappmsd
 
+package com.example.furbloomappmsd
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,9 +12,9 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.furbloomappmsd.data.PetReminder
+import com.example.furbloomappmsd.ui.ReminderViewModel // FIXED: Import path updated
+import com.example.furbloomappmsd.ui.ReminderViewModelFactory // FIXED: Import path updated
 import com.example.furbloomappmsd.utils.ReminderUtils
-import com.example.furbloomappmsd.viewmodel.ReminderViewModel
-import com.example.furbloomappmsd.viewmodel.ReminderViewModelFactory
 import java.util.Calendar
 
 class HomeFragment : Fragment() {
@@ -45,7 +45,6 @@ class HomeFragment : Fragment() {
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         dailyTasksAdapter = ReminderAdapter(
             showPetName = true,
-            // onItemClick is now optional and can be omitted.
             onToggleComplete = { reminder ->
                 if (reminder.id != -1) {
                     viewModel.update(reminder.copy(isCompleted = !reminder.isCompleted))

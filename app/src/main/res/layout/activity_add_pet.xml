@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- FIXED: Changed to LinearLayout and added Toolbar -->
+<!-- =================================================================== -->
+<!-- FIXED: Complete visual overhaul for the Add/Edit Pet screen.      -->
+<!-- This provides a modern, clean, and visually appealing layout.       -->
+<!-- =================================================================== -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="#FFF0F5">
+    android:background="#FFF0F5"
+    android:orientation="vertical">
 
     <include layout="@layout/custom_toolbar" />
 
@@ -15,92 +19,124 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipToPadding="false"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:padding="20dp"
-            android:paddingBottom="40dp">
+            android:padding="24dp">
 
-            <!-- Photo -->
-            <ImageView
-                android:id="@+id/ivPetPhoto"
-                android:layout_width="140dp"
-                android:layout_height="140dp"
-                android:background="@drawable/rounded_image_mask"
-                android:contentDescription="Pet Photo"
-                android:scaleType="centerCrop"
-                android:src="@drawable/ic_pet_placeholder" />
+            <!-- Photo Section -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                app:cardCornerRadius="75dp"
+                app:cardElevation="4dp">
 
-            <Button
+                <ImageView
+                    android:id="@+id/ivPetPhoto"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Pet Photo"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_pet_placeholder" />
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnChoosePhoto"
+                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="Choose Photo" />
+                android:layout_marginTop="12dp"
+                android:text="Choose Photo"
+                app:strokeColor="@color/purple_200"
+                android:textColor="@color/purple_700"/>
 
             <!-- Name (Required) -->
             <EditText
                 android:id="@+id/etPetName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/edit_text_background"
                 android:hint="Pet Name *"
-                android:inputType="textCapWords"/>
+                android:inputType="textCapWords"
+                android:padding="16dp" />
 
-            <!-- FIXED: Replaced EditText for age with a Button for birth date -->
-            <Button
+            <!-- === THE BEAUTIFUL BIRTH DATE FIX === -->
+            <!-- FIXED: Replaced the ugly Button with a styled TextView that looks like an input field. -->
+            <TextView
                 android:id="@+id/btnSetBirthDate"
-                style="?attr/materialButtonOutlinedStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:hint="Set Birth Date (Optional)" />
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edit_text_background"
+                android:clickable="true"
+                android:focusable="true"
+                android:hint="Set Birth Date (Optional)"
+                android:padding="16dp"
+                android:textColorHint="#999"
+                android:textSize="18sp"
+                android:textColor="@android:color/black"/>
 
             <!-- Species -->
             <EditText
                 android:id="@+id/etPetSpecies"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:hint="Species (Dog, Cat...)"
-                android:inputType="textCapWords"/>
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edit_text_background"
+                android:hint="Species (e.g., Dog, Cat)"
+                android:inputType="textCapWords"
+                android:padding="16dp" />
 
-            <!-- Replaced EditText with Spinner for Gender -->
+            <!-- Gender Spinner with a modern style -->
             <Spinner
                 android:id="@+id/spinnerPetGender"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
-                android:layout_marginTop="10dp"
-                style="@style/Widget.AppCompat.Spinner.Underlined"/>
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edit_text_background"
+                android:minHeight="56dp"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp" />
 
             <!-- Medical History -->
             <EditText
                 android:id="@+id/etMedicalHistory"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edit_text_background"
                 android:gravity="top"
                 android:hint="Medical History"
+                android:inputType="textCapSentences|textMultiLine"
                 android:minLines="3"
-                android:inputType="textCapSentences|textMultiLine"/>
+                android:padding="16dp" />
 
             <!-- Notes -->
             <EditText
                 android:id="@+id/etNotes"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="12dp"
+                android:background="@drawable/edit_text_background"
                 android:gravity="top"
                 android:hint="Notes"
+                android:inputType="textCapSentences|textMultiLine"
                 android:minLines="3"
-                android:inputType="textCapSentences|textMultiLine"/>
+                android:padding="16dp" />
 
-            <Button
+            <!-- Save Button -->
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnSavePet"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="Save Pet" />
+                android:layout_marginTop="24dp"
+                android:padding="14dp"
+                android:text="Save Pet"
+                android:textSize="16sp"
+                app:backgroundTint="#C58ECF"
+                app:cornerRadius="20dp" />
 
         </LinearLayout>
     </ScrollView>

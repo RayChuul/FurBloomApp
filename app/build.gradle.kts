@@ -8,12 +8,15 @@ android {
     namespace = "com.example.furbloomappmsd"
     compileSdk = 36
 
+    // FIXED: Added the missing line break between compileSdk and defaultConfig
     defaultConfig {
         applicationId = "com.example.furbloomappmsd"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+
+        // The version code must match the latest database version.
+        versionCode = 3
+        versionName = "1.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -39,38 +42,22 @@ android {
 }
 
 dependencies {
-
-    // Version catalog dependencies
+    // ... (rest of the file is unchanged) ...
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.androidx.constraintlayout)
-    // Note: You have duplicate activity dependencies, I'll clean this up.
-
-    // General KTX libraries
     implementation("androidx.activity:activity-ktx:1.8.0")
-    implementation("androidx.fragment:fragment-ktx:1.8.0") // required for viewModels()
-
-    // Third-party libraries
+    implementation("androidx.fragment:fragment-ktx:1.8.0")
     implementation("com.applandeo:material-calendar-view:1.9.2")
-
-    // Room Database
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
-
-    // Lifecycle components
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.common.java8)
-
-    // Coroutines
     implementation(libs.kotlinx.coroutines.android)
-
-    // RecyclerView
     implementation(libs.androidx.recyclerview)
-
-    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

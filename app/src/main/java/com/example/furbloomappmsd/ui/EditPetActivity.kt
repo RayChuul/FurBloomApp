@@ -2,9 +2,8 @@ package com.example.furbloomappmsd.ui
 
 import android.Manifest
 import android.app.Activity
-import android.app.DatePickerDialog // FIXED: Import DatePickerDialog
+import android.app.DatePickerDialog
 import android.content.ContentValues
-// FIXED: Added a line break to separate the two import statements
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -18,6 +17,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.TextView // FIXED: Changed from Button to TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -32,16 +32,18 @@ import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
-import java.text.SimpleDateFormat // FIXED: Import SimpleDateFormat
-import java.util.Calendar // FIXED: Import Calendar
-import java.util.Date // FIXED: Import Date
-import java.util.Locale // FIXED: Import Locale
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 
 class EditPetActivity : AppCompatActivity() {
 
     private lateinit var ivPetPhoto: ImageView
     private lateinit var etName: EditText
-    private lateinit var btnSetBirthDate: Button // FIXED: Replaced etAge with a button
+    // === THE CRITICAL FIX ===
+    // The layout uses a TextView for this button now. This must be a TextView.
+    private lateinit var btnSetBirthDate: TextView
     private lateinit var etSpecies: EditText
     private lateinit var spinnerGender: Spinner
     private lateinit var etMedicalHistory: EditText
@@ -51,7 +53,7 @@ class EditPetActivity : AppCompatActivity() {
 
     private var currentPet: Pet? = null
     private var photoUri: String? = null
-    private var birthDate: Long? = null // FIXED: To store the selected birth date
+    private var birthDate: Long? = null
     private var petId: Int = -1
 
     private val viewModel: PetViewModel by viewModels {
@@ -96,7 +98,7 @@ class EditPetActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_pet)
+        setContentView(R.layout.activity_add_pet) // This correctly uses the same layout
 
         val toolbar: MaterialToolbar = findViewById(R.id.custom_toolbar)
         setSupportActionBar(toolbar)
@@ -105,7 +107,7 @@ class EditPetActivity : AppCompatActivity() {
 
         ivPetPhoto = findViewById(R.id.ivPetPhoto)
         etName = findViewById(R.id.etPetName)
-        btnSetBirthDate = findViewById(R.id.btnSetBirthDate) // FIXED: Find the button
+        btnSetBirthDate = findViewById(R.id.btnSetBirthDate) // This now correctly finds the TextView
         etSpecies = findViewById(R.id.etPetSpecies)
         spinnerGender = findViewById(R.id.spinnerPetGender)
         etMedicalHistory = findViewById(R.id.etMedicalHistory)
@@ -115,7 +117,7 @@ class EditPetActivity : AppCompatActivity() {
 
         setupGenderSpinner()
 
-        btnSetBirthDate.setOnClickListener { // FIXED: Set listener
+        btnSetBirthDate.setOnClickListener {
             showDatePickerDialog()
         }
 
@@ -128,7 +130,7 @@ class EditPetActivity : AppCompatActivity() {
 
         viewModel.getPetById(petId).observe(this, Observer { pet ->
             pet?.let {
-                if (currentPet == null) {
+                if (currentPet == null) { // Only populate once to avoid overwriting user changes
                     currentPet = it
                     populateUI(it)
                 }
@@ -170,11 +172,10 @@ class EditPetActivity : AppCompatActivity() {
 
     private fun populateUI(pet: Pet) {
         etName.setText(pet.name)
-        // FIXED: Populate birth date
         pet.birthDate?.let {
             birthDate = it
             val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.US)
-            btnSetBirthDate.text = sdf.format(Date(it)) // FIXED: Use java.util.Date
+            btnSetBirthDate.text = sdf.format(Date(it))
         }
         etSpecies.setText(pet.species ?: "")
         val genderPosition = genderOptions.indexOf(pet.gender)
@@ -193,10 +194,9 @@ class EditPetActivity : AppCompatActivity() {
         spinnerGender.adapter = adapter
     }
 
-    // FIXED: Add Date Picker Dialog function
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
-        birthDate?.let { calendar.timeInMillis = it } // Start with the current date if set
+        birthDate?.let { calendar.timeInMillis = it }
         val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
             calendar.set(Calendar.YEAR, year)
             calendar.set(Calendar.MONTH, month)
@@ -274,7 +274,7 @@ class EditPetActivity : AppCompatActivity() {
 
         val updatedPet = currentPet?.copy(
             name = name,
-            birthDate = birthDate, // FIXED: Use the birthDate property
+            birthDate = birthDate,
             species = if (species.isEmpty()) null else species,
             gender = gender,
             medicalHistory = if (medicalHistory.isEmpty()) null else medicalHistory,

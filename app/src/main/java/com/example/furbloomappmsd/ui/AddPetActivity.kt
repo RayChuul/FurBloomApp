@@ -2,7 +2,7 @@ package com.example.furbloomappmsd.ui
 
 import android.Manifest
 import android.app.Activity
-import android.app.DatePickerDialog // FIXED: Import DatePickerDialog
+import android.app.DatePickerDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -17,6 +17,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Spinner
+import android.widget.TextView // FIXED: Changed from Button to TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -30,15 +31,17 @@ import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
-import java.text.SimpleDateFormat // FIXED: Import SimpleDateFormat
-import java.util.Calendar // FIXED: Import Calendar
-import java.util.Locale // FIXED: Import Locale
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 class AddPetActivity : AppCompatActivity() {
 
     private lateinit var ivPetPhoto: ImageView
     private lateinit var etName: EditText
-    private lateinit var btnSetBirthDate: Button // FIXED: Replaced etAge with a button
+    // === THE CRITICAL FIX ===
+    // The layout uses a TextView for this button now. This must be a TextView.
+    private lateinit var btnSetBirthDate: TextView
     private lateinit var etSpecies: EditText
     private lateinit var spinnerGender: Spinner
     private lateinit var etMedicalHistory: EditText
@@ -46,7 +49,7 @@ class AddPetActivity : AppCompatActivity() {
     private lateinit var btnChoosePhoto: Button
     private lateinit var btnSave: Button
     private var photoUri: String? = null
-    private var birthDate: Long? = null // FIXED: To store the selected birth date
+    private var birthDate: Long? = null
 
     private val viewModel: PetViewModel by viewModels {
         PetViewModelFactory((application as PetApplication).petRepository)
@@ -97,7 +100,7 @@ class AddPetActivity : AppCompatActivity() {
 
         ivPetPhoto = findViewById(R.id.ivPetPhoto)
         etName = findViewById(R.id.etPetName)
-        btnSetBirthDate = findViewById(R.id.btnSetBirthDate) // FIXED: Find the button
+        btnSetBirthDate = findViewById(R.id.btnSetBirthDate) // This now correctly finds the TextView
         etSpecies = findViewById(R.id.etPetSpecies)
         spinnerGender = findViewById(R.id.spinnerPetGender)
         etMedicalHistory = findViewById(R.id.etMedicalHistory)
@@ -107,7 +110,6 @@ class AddPetActivity : AppCompatActivity() {
 
         setupGenderSpinner()
 
-        // FIXED: Set listener for the birth date button
         btnSetBirthDate.setOnClickListener {
             showDatePickerDialog()
         }
@@ -126,7 +128,6 @@ class AddPetActivity : AppCompatActivity() {
         return true
     }
 
-    // FIXED: Added function to show the date picker
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
@@ -219,7 +220,6 @@ class AddPetActivity : AppCompatActivity() {
             Toast.makeText(this, "Pet name is required", Toast.LENGTH_SHORT).show()
             return
         }
-        // val age = etAge.text.toString().toIntOrNull() // FIXED: Removed
         val species = etSpecies.text.toString().trim()
         val gender = spinnerGender.selectedItem.toString()
         val medicalHistory = etMedicalHistory.text.toString().trim()
@@ -227,7 +227,7 @@ class AddPetActivity : AppCompatActivity() {
 
         val pet = Pet(
             name = name,
-            birthDate = birthDate, // FIXED: Use the birthDate property
+            birthDate = birthDate,
             species = if (species.isEmpty()) null else species,
             gender = gender,
             medicalHistory = if (medicalHistory.isEmpty()) null else medicalHistory,

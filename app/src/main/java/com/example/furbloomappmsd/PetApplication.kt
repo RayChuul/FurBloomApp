@@ -4,15 +4,10 @@ import android.app.Application
 import com.example.furbloomappmsd.data.FurBloomDatabase
 import com.example.furbloomappmsd.data.PetRepository
 import com.example.furbloomappmsd.data.ReminderRepository
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.SupervisorJob
 
+// FIXED: Reverted to a simpler version. The coroutine scope was not correctly implemented
+// and was causing confusion. This simpler setup is more stable with the database fix.
 class PetApplication : Application() {
-    // FIXED: Use a SupervisorJob so that if one coroutine fails, it doesn't cancel others.
-    private val applicationScope = CoroutineScope(SupervisorJob())
-
-    // FIXED: Use lazy initialization that is thread-safe and tied to the application scope.
-    // The database is now guaranteed to be created in the background.
     val database by lazy { FurBloomDatabase.getDatabase(this) }
     val petRepository by lazy { PetRepository(database.petDao()) }
     val reminderRepository by lazy { ReminderRepository(database.petReminderDao()) }

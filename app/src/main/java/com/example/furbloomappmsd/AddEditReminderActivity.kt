@@ -16,8 +16,8 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.furbloomappmsd.data.PetReminder
-import com.example.furbloomappmsd.viewmodel.ReminderViewModel
-import com.example.furbloomappmsd.viewmodel.ReminderViewModelFactory
+import com.example.furbloomappmsd.ui.ReminderViewModel
+import com.example.furbloomappmsd.ui.ReminderViewModelFactory
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.Calendar
 // import androidx.appcompat.app.AppCompatActivity // FIXED: Removed the duplicate import

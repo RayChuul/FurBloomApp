@@ -9,13 +9,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.applandeo.materialcalendarview.CalendarView
 import com.applandeo.materialcalendarview.CalendarDay
+import com.applandeo.materialcalendarview.CalendarView
 import com.applandeo.materialcalendarview.listeners.OnCalendarDayClickListener
 import com.example.furbloomappmsd.data.PetReminder
+import com.example.furbloomappmsd.ui.ReminderViewModel // FIXED: Import path updated
+import com.example.furbloomappmsd.ui.ReminderViewModelFactory // FIXED: Import path updated
 import com.example.furbloomappmsd.utils.ReminderUtils
-import com.example.furbloomappmsd.viewmodel.ReminderViewModel
-import com.example.furbloomappmsd.viewmodel.ReminderViewModelFactory
 import java.util.*
 
 class CalendarFragment : Fragment() {
@@ -50,10 +50,9 @@ class CalendarFragment : Fragment() {
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        // FIXED: Changed the empty lambda {} to null, which was causing a fatal ClassCastException.
         reminderAdapter = ReminderAdapter(
             showPetName = true,
-            onItemClick = null, // In the calendar, items are not clickable for editing.
+            onItemClick = null,
             onToggleComplete = { reminder -> if (reminder.id != -1) viewModel.update(reminder.copy(isCompleted = !reminder.isCompleted)) },
             onDelete = { reminder -> if (reminder.id != -1) viewModel.delete(reminder) }
         )
