@@ -14,4 +14,21 @@ class PetViewModel(private val repository: PetRepository) : ViewModel() {
             repository.insertPet(pet)
         }
     }
+
+    fun getPetById(id: Int): LiveData<Pet> {
+        return repository.getPetById(id)
+    }
+
+    fun updatePet(pet: Pet) {
+        viewModelScope.launch {
+            repository.updatePet(pet)
+        }
+    }
+
+    // ADD THIS FUNCTION
+    fun deletePet(pet: Pet) {
+        viewModelScope.launch {
+            repository.deletePet(pet)
+        }
+    }
 }

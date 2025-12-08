@@ -54,7 +54,12 @@
             android:exported="false" />
 
         <!-- Add Pet Activity -->
-        <activity android:name=".AddPetActivity" />
+        <activity android:name=".ui.AddPetActivity" />
+
+        <!-- ADD THIS ACTIVITY DECLARATION -->
+        <activity
+            android:name=".ui.EditPetActivity"
+            android:parentActivityName=".MyPetsActivity" />
 
     </application>
 
