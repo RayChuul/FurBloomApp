@@ -5,20 +5,22 @@ import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap // Import Bitmap
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.widget.ArrayAdapter // FIXED: Import ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Spinner // FIXED: Import Spinner
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity // FIXED: Only one import remains
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.example.furbloomappmsd.PetApplication
 import com.example.furbloomappmsd.R
@@ -34,7 +36,7 @@ class AddPetActivity : AppCompatActivity() {
     private lateinit var etName: EditText
     private lateinit var etAge: EditText
     private lateinit var etSpecies: EditText
-    private lateinit var etGender: EditText
+    private lateinit var spinnerGender: Spinner // FIXED: Changed from EditText
     private lateinit var etMedicalHistory: EditText
     private lateinit var etNotes: EditText
     private lateinit var btnChoosePhoto: Button
@@ -70,11 +72,9 @@ class AddPetActivity : AppCompatActivity() {
                 ivPetPhoto.setImageURI(imageUri)
                 photoUri = imageUri.toString()
             } else {
-                // FIXED: Handle bitmap saving correctly
                 val bitmap = result.data?.extras?.get("data") as? Bitmap
                 bitmap?.let {
                     ivPetPhoto.setImageBitmap(it)
-                    // Save the bitmap to a file and get its URI so it can be saved
                     photoUri = saveBitmapAndGetUri(it).toString()
                 }
             }
@@ -94,11 +94,14 @@ class AddPetActivity : AppCompatActivity() {
         etName = findViewById(R.id.etPetName)
         etAge = findViewById(R.id.etPetAge)
         etSpecies = findViewById(R.id.etPetSpecies)
-        etGender = findViewById(R.id.etPetGender)
+        spinnerGender = findViewById(R.id.spinnerPetGender) // FIXED: Find spinner
         etMedicalHistory = findViewById(R.id.etMedicalHistory)
         etNotes = findViewById(R.id.etNotes)
         btnChoosePhoto = findViewById(R.id.btnChoosePhoto)
         btnSave = findViewById(R.id.btnSavePet)
+
+        // FIXED: Setup the spinner for gender
+        setupGenderSpinner()
 
         btnChoosePhoto.setOnClickListener {
             showImageSourceDialog()
@@ -149,7 +152,6 @@ class AddPetActivity : AppCompatActivity() {
         cameraLauncher.launch(cameraIntent)
     }
 
-    // FIXED: Added this helper function to save bitmaps, just like in EditPetActivity
     private fun saveBitmapAndGetUri(bitmap: Bitmap): Uri? {
         val filename = "pet_${System.currentTimeMillis()}.jpg"
         var fos: OutputStream? = null
@@ -178,6 +180,14 @@ class AddPetActivity : AppCompatActivity() {
         return imageUri
     }
 
+    // FIXED: Added method to set up the gender spinner
+    private fun setupGenderSpinner() {
+        val genderOptions = arrayOf("Unknown", "Male", "Female")
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, genderOptions)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerGender.adapter = adapter
+    }
+
     private fun savePet() {
         val name = etName.text.toString().trim()
         if (name.isEmpty()) {
@@ -186,7 +196,7 @@ class AddPetActivity : AppCompatActivity() {
         }
         val age = etAge.text.toString().toIntOrNull()
         val species = etSpecies.text.toString().trim()
-        val gender = etGender.text.toString().trim()
+        val gender = spinnerGender.selectedItem.toString() // FIXED: Get value from spinner
         val medicalHistory = etMedicalHistory.text.toString().trim()
         val notes = etNotes.text.toString().trim()
 
@@ -194,10 +204,10 @@ class AddPetActivity : AppCompatActivity() {
             name = name,
             age = age,
             species = if (species.isEmpty()) null else species,
-            gender = if (gender.isEmpty()) null else gender,
+            gender = gender, // FIXED: Save spinner value
             medicalHistory = if (medicalHistory.isEmpty()) null else medicalHistory,
             notes = if (notes.isEmpty()) null else notes,
-            photoUri = photoUri // This now correctly holds the URI from both gallery and camera
+            photoUri = photoUri
         )
 
         viewModel.addPet(pet)

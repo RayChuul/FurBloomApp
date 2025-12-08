@@ -13,8 +13,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // FIXED: Set up the custom toolbar
-        val toolbar: MaterialToolbar = findViewById(R.id.custom_toolbar)
+        // FIXED: Changed R.id.custom_toolbar to R.id.main_toolbar to match the ID in activity_main.xml
+        val toolbar: MaterialToolbar = findViewById(R.id.main_toolbar)
         setSupportActionBar(toolbar)
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottom_navigation)
@@ -28,7 +28,8 @@ class MainActivity : AppCompatActivity() {
 
         bottomNav.setOnItemSelectedListener { item ->
             var selectedFragment: Fragment? = null
-            var title: String = getString(R.string.app_name) // Default title
+            // FIXED: Changed the default title from a missing string resource to "Home".
+            var title: String = "Home" // Default title
 
             when (item.itemId) {
                 R.id.nav_home -> {

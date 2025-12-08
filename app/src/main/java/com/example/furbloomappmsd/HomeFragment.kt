@@ -45,6 +45,7 @@ class HomeFragment : Fragment() {
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         dailyTasksAdapter = ReminderAdapter(
+            showPetName = true, // FIXED: Explicitly set showPetName to true
             onItemClick = { /* Handle click */ },
             onToggleComplete = { reminder ->
                 // Only allow toggling for non-virtual reminders

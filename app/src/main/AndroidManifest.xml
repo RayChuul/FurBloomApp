@@ -31,17 +31,7 @@
 
         <activity
             android:name=".AddEditReminderActivity"
-            android:parentActivityName=".MainActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".RecyclingListActivity"
-            android:parentActivityName=".MainActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".SettingsActivity"
-            android:parentActivityName=".MainActivity"
+            android:parentActivityName=".PetDetailActivity"
             android:exported="false" />
 
         <activity
@@ -49,13 +39,14 @@
             android:parentActivityName=".MainActivity"
             android:exported="false" />
 
-        <activity android:name=".ui.AddPetActivity" />
+        <activity
+            android:name=".ui.AddPetActivity"
+            android:parentActivityName=".MyPetsActivity"/>
 
         <activity
             android:name=".ui.EditPetActivity"
-            android:parentActivityName=".MyPetsActivity" />
+            android:parentActivityName=".PetDetailActivity" />
 
-        <!-- ADD THIS ACTIVITY DECLARATION -->
         <activity
             android:name=".PetDetailActivity"
             android:parentActivityName=".MyPetsActivity" />

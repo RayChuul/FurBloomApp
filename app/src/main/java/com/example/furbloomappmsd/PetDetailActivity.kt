@@ -1,15 +1,21 @@
 package com.example.furbloomappmsd
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity // FIXED: Kept only one import
+import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.PopupMenu
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,8 +27,9 @@ import com.example.furbloomappmsd.ui.PetViewModel
 import com.example.furbloomappmsd.ui.PetViewModelFactory
 import com.example.furbloomappmsd.viewmodel.ReminderViewModel
 import com.example.furbloomappmsd.viewmodel.ReminderViewModelFactory
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import java.util.Calendar
 
 class PetDetailActivity : AppCompatActivity() {
 
@@ -53,7 +60,7 @@ class PetDetailActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pet_detail)
 
-        val toolbar: MaterialToolbar = findViewById(R.id.custom_toolbar)
+        val toolbar: MaterialToolbar = findViewById(R.id.detail_toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
@@ -66,6 +73,9 @@ class PetDetailActivity : AppCompatActivity() {
         tvNotes = findViewById(R.id.tvNotes)
         fabOptions = findViewById(R.id.fab_options)
         recyclerViewReminders = findViewById(R.id.recyclerView_pet_reminders)
+
+        // FIXED: Change FAB icon to be more descriptive
+        fabOptions.setImageResource(R.drawable.ic_more_vert)
 
         petId = intent.getIntExtra("PET_ID", -1)
         if (petId == -1) {
@@ -90,7 +100,6 @@ class PetDetailActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        // Re-observing ensures data is fresh if you come back to this screen
         observePetDetails()
         observeReminders()
     }
@@ -113,16 +122,18 @@ class PetDetailActivity : AppCompatActivity() {
             pet?.let {
                 currentPet = it
                 populateUI(it)
-                supportActionBar?.title = it.name // Set title to pet's name
+                supportActionBar?.title = it.name
             }
         })
     }
 
     private fun setupReminderRecyclerView() {
-        // FIXED: Added the required 'showPetName' parameter to the adapter constructor.
         reminderAdapter = ReminderAdapter(
-            showPetName = false, // We are on a pet-specific screen, so hide the name.
-            onItemClick = { /* Can add an action here if needed */ },
+            showPetName = false,
+            // FIXED: Clicking a reminder now opens the edit dialog
+            onItemClick = { reminder ->
+                currentPet?.let { showAddEditReminderDialog(it, reminder) }
+            },
             onToggleComplete = { reminder -> reminderViewModel.update(reminder.copy(isCompleted = !reminder.isCompleted)) },
             onDelete = { reminder -> reminderViewModel.delete(reminder) }
         )
@@ -152,12 +163,9 @@ class PetDetailActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
+                // FIXED: "Add Reminder" now directly opens the dialog
                 R.id.menu_add_reminder -> {
-                    val intent = Intent(this, AddEditReminderActivity::class.java).apply {
-                        putExtra("PET_ID", pet.id)
-                        putExtra("PET_NAME", pet.name)
-                    }
-                    startActivity(intent)
+                    showAddEditReminderDialog(pet, null)
                     true
                 }
                 R.id.menu_delete_pet -> {
@@ -178,6 +186,81 @@ class PetDetailActivity : AppCompatActivity() {
                 petViewModel.deletePet(pet)
                 Toast.makeText(this, "${pet.name} deleted", Toast.LENGTH_SHORT).show()
                 finish()
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    // FIXED: Moved the dialog logic here from AddEditReminderActivity
+    private fun showAddEditReminderDialog(pet: Pet, existingReminder: PetReminder?) {
+        val dialogView = layoutInflater.inflate(R.layout.dialog_add_reminder, null)
+        val etReminderDescription = dialogView.findViewById<EditText>(R.id.et_reminder_description)
+        val btnSetDate = dialogView.findViewById<Button>(R.id.btn_set_date)
+        val btnSetTime = dialogView.findViewById<Button>(R.id.btn_set_time)
+        val spinnerRepeat = dialogView.findViewById<Spinner>(R.id.spinner_repeat)
+
+        val repeatOptions = arrayOf("None", "Daily", "Weekly", "Monthly")
+        val spinnerAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, repeatOptions)
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerRepeat.adapter = spinnerAdapter
+
+        val calendar = Calendar.getInstance()
+        if (existingReminder != null) {
+            etReminderDescription.setText(existingReminder.description)
+            calendar.timeInMillis = existingReminder.dateTime
+            val repeatIndex = repeatOptions.indexOf(existingReminder.repeat)
+            spinnerRepeat.setSelection(if (repeatIndex != -1) repeatIndex else 0)
+        }
+
+        val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            btnSetDate.text = "$dayOfMonth/${month + 1}/$year"
+        }
+
+        val timeSetListener = TimePickerDialog.OnTimeSetListener { _, hour, minute ->
+            calendar.set(Calendar.HOUR_OF_DAY, hour)
+            calendar.set(Calendar.MINUTE, minute)
+            btnSetTime.text = String.format("%02d:%02d", hour, minute)
+        }
+
+        btnSetDate.setOnClickListener {
+            DatePickerDialog(this, dateSetListener, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)).show()
+        }
+
+        btnSetTime.setOnClickListener {
+            TimePickerDialog(this, timeSetListener, calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE), true).show()
+        }
+
+        AlertDialog.Builder(this)
+            .setTitle(if (existingReminder == null) "Add Reminder" else "Edit Reminder")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                val description = etReminderDescription.text.toString().trim()
+                val selectedRepeat = spinnerRepeat.selectedItem.toString()
+
+                if (description.isNotEmpty()) {
+                    val reminder = existingReminder?.copy(
+                        description = description,
+                        dateTime = calendar.timeInMillis,
+                        repeat = selectedRepeat
+                    ) ?: PetReminder(
+                        petId = pet.id,
+                        petName = pet.name,
+                        reminderType = "General",
+                        description = description,
+                        dateTime = calendar.timeInMillis,
+                        repeat = selectedRepeat
+                    )
+                    if (existingReminder == null) {
+                        reminderViewModel.insert(reminder)
+                    } else {
+                        reminderViewModel.update(reminder)
+                    }
+                } else {
+                    Toast.makeText(this, "Description cannot be empty", Toast.LENGTH_SHORT).show()
+                }
             }
             .setNegativeButton("Cancel", null)
             .show()
