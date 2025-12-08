@@ -2,6 +2,7 @@ package com.example.furbloomappmsd.ui
 
 import android.Manifest
 import android.app.Activity
+import android.app.DatePickerDialog // FIXED: Import DatePickerDialog
 import android.content.ContentValues
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,11 +12,11 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.widget.ArrayAdapter // FIXED: Import ArrayAdapter
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
-import android.widget.Spinner // FIXED: Import Spinner
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
@@ -29,19 +30,23 @@ import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
+import java.text.SimpleDateFormat // FIXED: Import SimpleDateFormat
+import java.util.Calendar // FIXED: Import Calendar
+import java.util.Locale // FIXED: Import Locale
 
 class AddPetActivity : AppCompatActivity() {
 
     private lateinit var ivPetPhoto: ImageView
     private lateinit var etName: EditText
-    private lateinit var etAge: EditText
+    private lateinit var btnSetBirthDate: Button // FIXED: Replaced etAge with a button
     private lateinit var etSpecies: EditText
-    private lateinit var spinnerGender: Spinner // FIXED: Changed from EditText
+    private lateinit var spinnerGender: Spinner
     private lateinit var etMedicalHistory: EditText
     private lateinit var etNotes: EditText
     private lateinit var btnChoosePhoto: Button
     private lateinit var btnSave: Button
     private var photoUri: String? = null
+    private var birthDate: Long? = null // FIXED: To store the selected birth date
 
     private val viewModel: PetViewModel by viewModels {
         PetViewModelFactory((application as PetApplication).petRepository)
@@ -92,16 +97,20 @@ class AddPetActivity : AppCompatActivity() {
 
         ivPetPhoto = findViewById(R.id.ivPetPhoto)
         etName = findViewById(R.id.etPetName)
-        etAge = findViewById(R.id.etPetAge)
+        btnSetBirthDate = findViewById(R.id.btnSetBirthDate) // FIXED: Find the button
         etSpecies = findViewById(R.id.etPetSpecies)
-        spinnerGender = findViewById(R.id.spinnerPetGender) // FIXED: Find spinner
+        spinnerGender = findViewById(R.id.spinnerPetGender)
         etMedicalHistory = findViewById(R.id.etMedicalHistory)
         etNotes = findViewById(R.id.etNotes)
         btnChoosePhoto = findViewById(R.id.btnChoosePhoto)
         btnSave = findViewById(R.id.btnSavePet)
 
-        // FIXED: Setup the spinner for gender
         setupGenderSpinner()
+
+        // FIXED: Set listener for the birth date button
+        btnSetBirthDate.setOnClickListener {
+            showDatePickerDialog()
+        }
 
         btnChoosePhoto.setOnClickListener {
             showImageSourceDialog()
@@ -115,6 +124,23 @@ class AddPetActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    // FIXED: Added function to show the date picker
+    private fun showDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+        val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            birthDate = calendar.timeInMillis
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+            btnSetBirthDate.text = sdf.format(calendar.time)
+        }
+        DatePickerDialog(this, dateSetListener,
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)).show()
     }
 
     private fun showImageSourceDialog() {
@@ -180,7 +206,6 @@ class AddPetActivity : AppCompatActivity() {
         return imageUri
     }
 
-    // FIXED: Added method to set up the gender spinner
     private fun setupGenderSpinner() {
         val genderOptions = arrayOf("Unknown", "Male", "Female")
         val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, genderOptions)
@@ -194,17 +219,17 @@ class AddPetActivity : AppCompatActivity() {
             Toast.makeText(this, "Pet name is required", Toast.LENGTH_SHORT).show()
             return
         }
-        val age = etAge.text.toString().toIntOrNull()
+        // val age = etAge.text.toString().toIntOrNull() // FIXED: Removed
         val species = etSpecies.text.toString().trim()
-        val gender = spinnerGender.selectedItem.toString() // FIXED: Get value from spinner
+        val gender = spinnerGender.selectedItem.toString()
         val medicalHistory = etMedicalHistory.text.toString().trim()
         val notes = etNotes.text.toString().trim()
 
         val pet = Pet(
             name = name,
-            age = age,
+            birthDate = birthDate, // FIXED: Use the birthDate property
             species = if (species.isEmpty()) null else species,
-            gender = gender, // FIXED: Save spinner value
+            gender = gender,
             medicalHistory = if (medicalHistory.isEmpty()) null else medicalHistory,
             notes = if (notes.isEmpty()) null else notes,
             photoUri = photoUri

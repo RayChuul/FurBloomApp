@@ -6,33 +6,35 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
+// FIXED: Removed the incorrect and unused Jetpack Compose import
 import androidx.recyclerview.widget.RecyclerView
 import com.example.furbloomappmsd.R
 import com.example.furbloomappmsd.data.Pet
 
-// FIXED: The adapter now ONLY handles Pet items, which is much simpler and more stable.
 class PetAdapter(
-    private val onPetClick: (Pet) -> Unit
-) : ListAdapter<Pet, PetAdapter.PetViewHolder>(PetDiffCallback()) {
+    private val onPetClick: (Pet) -> Unit,
+    private val onAddPetClick: () -> Unit
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PetViewHolder {
-        val view = LayoutInflater.from(parent.context)
-            .inflate(R.layout.pet_item, parent, false)
-        return PetViewHolder(view)
+    private var pets: List<Pet> = emptyList()
+
+    // FIXED: Moved the view type constants into a companion object.
+    companion object {
+        private const val PET_VIEW_TYPE = 1
+        private const val ADD_BUTTON_VIEW_TYPE = 2
     }
 
-    override fun onBindViewHolder(holder: PetViewHolder, position: Int) {
-        val pet = getItem(position)
-        holder.bind(pet)
+    fun submitList(newPets: List<Pet>) {
+        pets = newPets
+        notifyDataSetChanged() // Reload the entire list
     }
 
-    inner class PetViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    // ViewHolder for the regular pet items
+    class PetViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         private val petName: TextView = view.findViewById(R.id.tv_pet_name)
         private val petImage: ImageView = view.findViewById(R.id.iv_pet_image)
 
-        fun bind(pet: Pet) {
+        fun bind(pet: Pet, onPetClick: (Pet) -> Unit) {
             petName.text = pet.name
             pet.photoUri?.let { uri ->
                 petImage.setImageURI(Uri.parse(uri))
@@ -40,14 +42,43 @@ class PetAdapter(
             itemView.setOnClickListener { onPetClick(pet) }
         }
     }
-}
 
-class PetDiffCallback : DiffUtil.ItemCallback<Pet>() {
-    override fun areItemsTheSame(oldItem: Pet, newItem: Pet): Boolean {
-        return oldItem.id == newItem.id
+    // ViewHolder for the "Add Pet" button
+    class AddPetViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        fun bind(onAddPetClick: () -> Unit) {
+            itemView.setOnClickListener { onAddPetClick() }
+        }
     }
 
-    override fun areContentsTheSame(oldItem: Pet, newItem: Pet): Boolean {
-        return oldItem == newItem
+    override fun getItemViewType(position: Int): Int {
+        // If the position is equal to the number of pets, it's the "Add" button
+        return if (position < pets.size) PET_VIEW_TYPE else ADD_BUTTON_VIEW_TYPE
+    }
+
+    override fun getItemCount(): Int {
+        // The total number of items is the number of pets plus the "Add" button
+        return pets.size + 1
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return if (viewType == PET_VIEW_TYPE) {
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.pet_item, parent, false)
+            PetViewHolder(view)
+        } else { // ADD_BUTTON_VIEW_TYPE
+            val view = LayoutInflater.from(parent.context)
+                .inflate(R.layout.pet_add_item, parent, false)
+            AddPetViewHolder(view)
+        }
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder.itemViewType == PET_VIEW_TYPE) {
+            // It's a pet, so bind pet data
+            (holder as PetViewHolder).bind(pets[position], onPetClick)
+        } else {
+            // It's the "Add Pet" button
+            (holder as AddPetViewHolder).bind(onAddPetClick)
+        }
     }
 }

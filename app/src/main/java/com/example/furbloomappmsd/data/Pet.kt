@@ -5,11 +5,11 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "pets")
 data class Pet(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @PrimaryKey(autoGenerate = true)val id: Int = 0,
 
     val name: String,
-    val age: Int? = null,
+    // FIXED: Changed 'age' to 'birthDate' to store a timestamp
+    val birthDate: Long? = null,
     val species: String? = null,
     val gender: String? = null,
     val medicalHistory: String? = null,

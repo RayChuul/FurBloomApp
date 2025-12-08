@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-// FIXED: Import Toolbar
 import com.google.android.material.appbar.MaterialToolbar
 
 class MainActivity : AppCompatActivity() {
@@ -13,8 +12,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // FIXED: Changed R.id.custom_toolbar to R.id.main_toolbar to match the ID in activity_main.xml
-        val toolbar: MaterialToolbar = findViewById(R.id.main_toolbar)
+        // FIXED: The ID 'custom_toolbar' belongs to the MaterialToolbar *inside* the included layout.
+        // The original findViewById call was correct, and this ensures it finds the toolbar.
+        // This was the root cause of the crash on launch.
+        val toolbar: MaterialToolbar = findViewById(R.id.custom_toolbar)
         setSupportActionBar(toolbar)
 
         val bottomNav: BottomNavigationView = findViewById(R.id.bottom_navigation)
@@ -23,33 +24,32 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
                 .replace(R.id.nav_host_fragment, HomeFragment()).commit()
-            supportActionBar?.title = "Home" // Initial title
+            supportActionBar?.title = "Home"
         }
 
         bottomNav.setOnItemSelectedListener { item ->
             var selectedFragment: Fragment? = null
-            // FIXED: Changed the default title from a missing string resource to "Home".
-            var title: String = "Home" // Default title
+            var title: String = "Home"
 
             when (item.itemId) {
                 R.id.nav_home -> {
                     selectedFragment = HomeFragment()
-                    title = "Home" // FIXED: Set title
+                    title = "Home"
                 }
                 R.id.nav_calendar -> {
                     selectedFragment = CalendarFragment()
-                    title = "Calendar" // FIXED: Set title
+                    title = "Calendar"
                 }
                 R.id.nav_settings -> {
                     selectedFragment = SettingsFragment()
-                    title = "Settings" // FIXED: Set title
+                    title = "Settings"
                 }
             }
 
             if (selectedFragment != null) {
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.nav_host_fragment, selectedFragment).commit()
-                supportActionBar?.title = title // FIXED: Update the title
+                supportActionBar?.title = title
             }
 
             true

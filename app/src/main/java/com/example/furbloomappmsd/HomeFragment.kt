@@ -12,7 +12,6 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.furbloomappmsd.data.PetReminder
-// FIXED: Import the new utility class
 import com.example.furbloomappmsd.utils.ReminderUtils
 import com.example.furbloomappmsd.viewmodel.ReminderViewModel
 import com.example.furbloomappmsd.viewmodel.ReminderViewModelFactory
@@ -45,16 +44,14 @@ class HomeFragment : Fragment() {
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
         dailyTasksAdapter = ReminderAdapter(
-            showPetName = true, // FIXED: Explicitly set showPetName to true
-            onItemClick = { /* Handle click */ },
+            showPetName = true,
+            // onItemClick is now optional and can be omitted.
             onToggleComplete = { reminder ->
-                // Only allow toggling for non-virtual reminders
                 if (reminder.id != -1) {
                     viewModel.update(reminder.copy(isCompleted = !reminder.isCompleted))
                 }
             },
             onDelete = { reminder ->
-                // Only allow deleting for non-virtual reminders
                 if (reminder.id != -1) {
                     viewModel.delete(reminder)
                 }
@@ -66,7 +63,6 @@ class HomeFragment : Fragment() {
 
     private fun observeDailyTasks() {
         viewModel.allReminders.observe(viewLifecycleOwner, Observer { baseReminders ->
-            // FIXED: Expand reminders and then filter for today
             val allProjectedReminders = ReminderUtils.getExpandedReminders(baseReminders)
             val today = Calendar.getInstance()
 
@@ -75,9 +71,8 @@ class HomeFragment : Fragment() {
                 ReminderUtils.isSameDay(reminderCalendar, today)
             }
 
-            // Sort list by completion status then by time
             val sortedList = todayReminders.sortedWith(
-                compareBy<PetReminder> { it.isCompleted && it.id != -1 } // Treat virtual tasks as incomplete
+                compareBy<PetReminder> { it.isCompleted }
                     .thenBy { it.dateTime }
             )
             dailyTasksAdapter.submitList(sortedList)

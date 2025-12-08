@@ -11,13 +11,12 @@ import com.example.furbloomappmsd.ui.PetAdapter
 import com.example.furbloomappmsd.ui.PetViewModel
 import com.example.furbloomappmsd.ui.PetViewModelFactory
 import com.google.android.material.appbar.MaterialToolbar
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+
 
 class MyPetsActivity : AppCompatActivity() {
 
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: PetAdapter
-    private lateinit var fabAddPet: FloatingActionButton // FIXED: Added FAB
 
     private val viewModel: PetViewModel by viewModels {
         PetViewModelFactory((application as PetApplication).petRepository)
@@ -33,17 +32,11 @@ class MyPetsActivity : AppCompatActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         recyclerView = findViewById(R.id.recyclerView_pets)
-        fabAddPet = findViewById(R.id.fab_add_pet) // FIXED: Find the FAB
 
         setupRecyclerView()
 
         viewModel.allPets.observe(this) { pets ->
             adapter.submitList(pets)
-        }
-
-        // FIXED: Set click listener for the new FAB
-        fabAddPet.setOnClickListener {
-            startActivity(Intent(this, AddPetActivity::class.java))
         }
     }
 
@@ -53,16 +46,26 @@ class MyPetsActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        // FIXED: The adapter no longer needs the onAddPetClick lambda
-        adapter = PetAdapter { pet ->
-            val intent = Intent(this, PetDetailActivity::class.java).apply {
-                putExtra("PET_ID", pet.id)
+        adapter = PetAdapter(
+            onPetClick = { pet ->
+                val intent = Intent(this, PetDetailActivity::class.java).apply {
+                    putExtra("PET_ID", pet.id)
+                }
+                startActivity(intent)
+            },
+            onAddPetClick = {
+                startActivity(Intent(this, AddPetActivity::class.java))
             }
-            startActivity(intent)
-        }
-
+        )
         recyclerView.adapter = adapter
-        // FIXED: The layout manager no longer needs a complex spanSizeLookup
-        recyclerView.layoutManager = GridLayoutManager(this, 2)
+
+        val layoutManager = GridLayoutManager(this, 2)
+        layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
+            override fun getSpanSize(position: Int): Int {
+                // The ADD_BUTTON_VIEW_TYPE is 2. If the item type is the add button, span 2 columns.
+                return if (adapter.getItemViewType(position) == 2) 2 else 1
+            }
+        }
+        recyclerView.layoutManager = layoutManager
     }
 }

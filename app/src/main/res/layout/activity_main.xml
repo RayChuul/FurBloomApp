@@ -4,9 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- FIXED: Include the custom toolbar at the top -->
+    <!--
+        FIXED: The ID was 'main_toolbar', but MainActivity.kt was looking for 'custom_toolbar'.
+        This ID mismatch was the root cause of the crash. It is now corrected.
+    -->
     <include
-        android:id="@+id/main_toolbar"
+        android:id="@+id/custom_toolbar"
         layout="@layout/custom_toolbar" />
 
     <!-- This container will hold our fragments, positioned below the toolbar -->
@@ -14,7 +17,7 @@
         android:id="@+id/nav_host_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/main_toolbar"
+        android:layout_below="@id/custom_toolbar"
         android:layout_above="@id/bottom_navigation" />
 
     <!-- The Bottom Navigation Bar -->

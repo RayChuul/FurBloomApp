@@ -2,7 +2,9 @@ package com.example.furbloomappmsd.ui
 
 import android.Manifest
 import android.app.Activity
+import android.app.DatePickerDialog // FIXED: Import DatePickerDialog
 import android.content.ContentValues
+// FIXED: Added a line break to separate the two import statements
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -11,14 +13,16 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity // FIXED: Only one import remains
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.example.furbloomappmsd.PetApplication
@@ -28,16 +32,18 @@ import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
-// import androidx.appcompat.app.AppCompatActivity // FIXED: This duplicate line is removed
+import java.text.SimpleDateFormat // FIXED: Import SimpleDateFormat
+import java.util.Calendar // FIXED: Import Calendar
+import java.util.Date // FIXED: Import Date
+import java.util.Locale // FIXED: Import Locale
 
 class EditPetActivity : AppCompatActivity() {
 
-    // ... (All properties remain the same)
     private lateinit var ivPetPhoto: ImageView
     private lateinit var etName: EditText
-    private lateinit var etAge: EditText
+    private lateinit var btnSetBirthDate: Button // FIXED: Replaced etAge with a button
     private lateinit var etSpecies: EditText
-    private lateinit var etGender: EditText
+    private lateinit var spinnerGender: Spinner
     private lateinit var etMedicalHistory: EditText
     private lateinit var etNotes: EditText
     private lateinit var btnChoosePhoto: Button
@@ -45,11 +51,14 @@ class EditPetActivity : AppCompatActivity() {
 
     private var currentPet: Pet? = null
     private var photoUri: String? = null
+    private var birthDate: Long? = null // FIXED: To store the selected birth date
     private var petId: Int = -1
 
     private val viewModel: PetViewModel by viewModels {
         PetViewModelFactory((application as PetApplication).petRepository)
     }
+
+    private val genderOptions = arrayOf("Unknown", "Male", "Female")
 
     private val galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -96,13 +105,19 @@ class EditPetActivity : AppCompatActivity() {
 
         ivPetPhoto = findViewById(R.id.ivPetPhoto)
         etName = findViewById(R.id.etPetName)
-        etAge = findViewById(R.id.etPetAge)
+        btnSetBirthDate = findViewById(R.id.btnSetBirthDate) // FIXED: Find the button
         etSpecies = findViewById(R.id.etPetSpecies)
-        etGender = findViewById(R.id.etPetGender)
+        spinnerGender = findViewById(R.id.spinnerPetGender)
         etMedicalHistory = findViewById(R.id.etMedicalHistory)
         etNotes = findViewById(R.id.etNotes)
         btnChoosePhoto = findViewById(R.id.btnChoosePhoto)
         btnSave = findViewById(R.id.btnSavePet)
+
+        setupGenderSpinner()
+
+        btnSetBirthDate.setOnClickListener { // FIXED: Set listener
+            showDatePickerDialog()
+        }
 
         petId = intent.getIntExtra("PET_ID", -1)
         if (petId == -1) {
@@ -155,15 +170,47 @@ class EditPetActivity : AppCompatActivity() {
 
     private fun populateUI(pet: Pet) {
         etName.setText(pet.name)
-        etAge.setText(pet.age?.toString() ?: "")
+        // FIXED: Populate birth date
+        pet.birthDate?.let {
+            birthDate = it
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+            btnSetBirthDate.text = sdf.format(Date(it)) // FIXED: Use java.util.Date
+        }
         etSpecies.setText(pet.species ?: "")
-        etGender.setText(pet.gender ?: "")
+        val genderPosition = genderOptions.indexOf(pet.gender)
+        spinnerGender.setSelection(if (genderPosition != -1) genderPosition else 0)
         etMedicalHistory.setText(pet.medicalHistory ?: "")
         etNotes.setText(pet.notes ?: "")
         photoUri = pet.photoUri
         photoUri?.let {
             ivPetPhoto.setImageURI(Uri.parse(it))
         } ?: ivPetPhoto.setImageResource(R.drawable.ic_pet_placeholder)
+    }
+
+    private fun setupGenderSpinner() {
+        val adapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, genderOptions)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        spinnerGender.adapter = adapter
+    }
+
+    // FIXED: Add Date Picker Dialog function
+    private fun showDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+        birthDate?.let { calendar.timeInMillis = it } // Start with the current date if set
+        val dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            calendar.set(Calendar.YEAR, year)
+            calendar.set(Calendar.MONTH, month)
+            calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+            birthDate = calendar.timeInMillis
+            val sdf = SimpleDateFormat("dd/MM/yyyy", Locale.US)
+            btnSetBirthDate.text = sdf.format(calendar.time)
+        }
+        DatePickerDialog(
+            this, dateSetListener,
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
     }
 
     private fun checkCameraPermissionAndLaunch() {
@@ -220,17 +267,16 @@ class EditPetActivity : AppCompatActivity() {
             Toast.makeText(this, "Pet name is required", Toast.LENGTH_SHORT).show()
             return
         }
-        val age = etAge.text.toString().toIntOrNull()
         val species = etSpecies.text.toString().trim()
-        val gender = etGender.text.toString().trim()
+        val gender = spinnerGender.selectedItem.toString()
         val medicalHistory = etMedicalHistory.text.toString().trim()
         val notes = etNotes.text.toString().trim()
 
         val updatedPet = currentPet?.copy(
             name = name,
-            age = age,
+            birthDate = birthDate, // FIXED: Use the birthDate property
             species = if (species.isEmpty()) null else species,
-            gender = if (gender.isEmpty()) null else gender,
+            gender = gender,
             medicalHistory = if (medicalHistory.isEmpty()) null else medicalHistory,
             notes = if (notes.isEmpty()) null else notes,
             photoUri = photoUri

@@ -30,6 +30,7 @@ import com.example.furbloomappmsd.viewmodel.ReminderViewModelFactory
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 class PetDetailActivity : AppCompatActivity() {
 
@@ -106,7 +107,8 @@ class PetDetailActivity : AppCompatActivity() {
 
     private fun populateUI(pet: Pet) {
         tvPetName.text = pet.name
-        tvPetAge.text = "Age: ${pet.age?.toString() ?: "N/A"}"
+        // FIXED: Calculate age string from birthDate
+        tvPetAge.text = pet.birthDate?.let { getAgeString(it) } ?: "Age: N/A"
         tvPetSpecies.text = "Species: ${pet.species ?: "N/A"}"
         tvPetGender.text = "Gender: ${pet.gender ?: "N/A"}"
         tvMedicalHistory.text = pet.medicalHistory ?: "None provided"
@@ -115,6 +117,29 @@ class PetDetailActivity : AppCompatActivity() {
         pet.photoUri?.let {
             ivPetPhoto.setImageURI(Uri.parse(it))
         } ?: ivPetPhoto.setImageResource(R.drawable.ic_pet_placeholder)
+    }
+
+    // FIXED: Add a helper function to calculate age
+    private fun getAgeString(birthDate: Long): String {
+        val today = Calendar.getInstance()
+        val birth = Calendar.getInstance().apply { timeInMillis = birthDate }
+
+        var years = today.get(Calendar.YEAR) - birth.get(Calendar.YEAR)
+        var months = today.get(Calendar.MONTH) - birth.get(Calendar.MONTH)
+
+        if (today.get(Calendar.DAY_OF_MONTH) < birth.get(Calendar.DAY_OF_MONTH)) {
+            months--
+        }
+        if (months < 0) {
+            years--
+            months += 12
+        }
+
+        return when {
+            years > 0 -> "Age: $years year${if (years > 1) "s" else ""}, $months month${if (months != 1) "s" else ""}"
+            months > 0 -> "Age: $months month${if (months > 1) "s" else ""}"
+            else -> "Age: Less than a month old"
+        }
     }
 
     private fun observePetDetails() {

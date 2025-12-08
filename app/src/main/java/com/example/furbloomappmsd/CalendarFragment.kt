@@ -41,7 +41,6 @@ class CalendarFragment : Fragment() {
         observeReminders()
 
         calendarView.setOnCalendarDayClickListener(object : OnCalendarDayClickListener {
-            // FIXED: Renamed the method from 'onCalendarDayClick' to 'onClick'
             override fun onClick(calendarDay: CalendarDay) {
                 updateReminderListForDay(calendarDay.calendar)
             }
@@ -51,8 +50,10 @@ class CalendarFragment : Fragment() {
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
+        // FIXED: Changed the empty lambda {} to null, which was causing a fatal ClassCastException.
         reminderAdapter = ReminderAdapter(
-            onItemClick = {},
+            showPetName = true,
+            onItemClick = null, // In the calendar, items are not clickable for editing.
             onToggleComplete = { reminder -> if (reminder.id != -1) viewModel.update(reminder.copy(isCompleted = !reminder.isCompleted)) },
             onDelete = { reminder -> if (reminder.id != -1) viewModel.delete(reminder) }
         )
@@ -64,7 +65,8 @@ class CalendarFragment : Fragment() {
         viewModel.allReminders.observe(viewLifecycleOwner, Observer { baseReminders ->
             this.expandedReminders = ReminderUtils.getExpandedReminders(baseReminders)
             updateCalendarEvents()
-            updateReminderListForDay(Calendar.getInstance())
+            val today = calendarView.selectedDates.firstOrNull() ?: Calendar.getInstance()
+            updateReminderListForDay(today)
         })
     }
 
