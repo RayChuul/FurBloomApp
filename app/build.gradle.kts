@@ -46,6 +46,8 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation("androidx.activity:activity-ktx:1.8.0")
+// required for viewModels()
 
     // Room Database
     implementation(libs.androidx.room.runtime)

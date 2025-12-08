@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    app:cardCornerRadius="12dp"
+    app:cardCornerRadius="16dp"
     app:cardElevation="4dp">
 
     <LinearLayout
@@ -18,13 +19,15 @@
             android:id="@+id/cb_completed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingEnd="8dp" />
+            android:focusable="false"
+            android:focusableInTouchMode="false"/>
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:orientation="vertical"
-            android:layout_weight="1">
+            android:paddingStart="12dp">
 
             <TextView
                 android:id="@+id/tv_reminder_description"
@@ -32,7 +35,8 @@
                 android:layout_height="wrap_content"
                 android:text="Walk Teddy"
                 android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textColor="@android:color/black"
+                android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/tv_reminder_time"
@@ -40,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:text="Today at 6:00 PM"
                 android:textSize="14sp"
-                android:textColor="#00838F" />
+                android:textColor="@android:color/darker_gray"/>
         </LinearLayout>
 
         <ImageButton
@@ -49,6 +53,6 @@
             android:layout_height="32dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_delete"
-            android:contentDescription="Delete" />
+            android:contentDescription="Delete"/>
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.google.android.material.card.MaterialCardView>

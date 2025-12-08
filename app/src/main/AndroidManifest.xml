@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
 
     <application
+        android:name=".PetApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -46,13 +47,14 @@
             android:parentActivityName=".MainActivity"
             android:exported="false" />
 
+        <!-- Pets List Activity -->
         <activity
             android:name=".MyPetsActivity"
             android:parentActivityName=".MainActivity"
             android:exported="false" />
 
-
-
+        <!-- Add Pet Activity -->
+        <activity android:name=".AddPetActivity" />
 
     </application>
 

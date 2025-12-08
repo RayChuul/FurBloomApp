@@ -1,19 +1,21 @@
-package com.example.furbloomappmsd
+package com.example.furbloomappmsd.ui
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.furbloomappmsd.R
+import com.example.furbloomappmsd.data.Pet
 
 class PetAdapter(
-    private val pets: List<Pet>,
+    private var pets: List<Pet>,
     private val onPetClick: (Pet) -> Unit,
     private val onAddPetClick: () -> Unit
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    // View type constants
     private val TYPE_PET = 0
     private val TYPE_ADD = 1
 
@@ -21,7 +23,7 @@ class PetAdapter(
         return if (position < pets.size) TYPE_PET else TYPE_ADD
     }
 
-    override fun getItemCount(): Int = pets.size + 1 // +1 for "Add Pet" card
+    override fun getItemCount(): Int = pets.size + 1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (viewType == TYPE_PET) {
@@ -39,11 +41,18 @@ class PetAdapter(
         if (holder is PetViewHolder) {
             val pet = pets[position]
             holder.petName.text = pet.name
-            holder.petImage.setImageResource(pet.imageResId)
+            pet.photoUri?.let { uri ->
+                holder.petImage.setImageURI(Uri.parse(uri))
+            } ?: holder.petImage.setImageResource(R.drawable.ic_pet_placeholder)
             holder.itemView.setOnClickListener { onPetClick(pet) }
         } else if (holder is AddPetViewHolder) {
             holder.itemView.setOnClickListener { onAddPetClick() }
         }
+    }
+
+    fun updatePets(newPets: List<Pet>) {
+        this.pets = newPets
+        notifyDataSetChanged()
     }
 
     inner class PetViewHolder(view: View) : RecyclerView.ViewHolder(view) {
@@ -53,4 +62,3 @@ class PetAdapter(
 
     inner class AddPetViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }
-

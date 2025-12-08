@@ -1,18 +1,52 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="24dp"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="16dp">
 
-    <!-- Example UI -->
+    <!-- Pet Image -->
+    <ImageView
+        android:id="@+id/iv_pet_image"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_pet_placeholder"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/rounded_image_mask"
+        android:clipToOutline="true"/>
+
+    <!-- Pet Name -->
     <TextView
+        android:id="@+id/tv_pet_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add/Edit Reminder"
-        android:textSize="24sp"
-        android:textStyle="bold" />
+        android:text="Pet Name"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_below="@id/iv_pet_image"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="12dp"/>
 
-    <!-- Add your input fields here -->
+    <!-- RecyclerView for Reminders -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView_reminders"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tv_pet_name"
+        android:layout_marginTop="16dp"
+        android:clipToPadding="false"
+        android:paddingBottom="80dp"/>
 
-</LinearLayout>
+    <!-- Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_options"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_add"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        app:backgroundTint="@color/purple_500"/>
+</RelativeLayout>
