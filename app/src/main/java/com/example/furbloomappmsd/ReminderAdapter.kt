@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class ReminderAdapter(
+    private val showPetName: Boolean = false,
     private val onItemClick: (PetReminder) -> Unit,
     private val onToggleComplete: (PetReminder) -> Unit,
     private val onDelete: (PetReminder) -> Unit
@@ -37,13 +38,23 @@ class ReminderAdapter(
         private val btnDelete: ImageButton = itemView.findViewById(R.id.btn_delete)
 
         fun bind(reminder: PetReminder) {
-            tvDescription.text = reminder.description
+            // FIXED: Logic to conditionally show the pet's name
+            tvDescription.text = if (showPetName) {
+                "${reminder.petName}: ${reminder.description}"
+            } else {
+                reminder.description
+            }
             val timeFormat = SimpleDateFormat("MMM dd, h:mm a", Locale.getDefault())
             tvTime.text = timeFormat.format(Date(reminder.dateTime))
+
+            // FIXED: This logic correctly handles the toggle action
+            cbCompleted.setOnCheckedChangeListener(null) // Prevent listener from firing during bind
             cbCompleted.isChecked = reminder.isCompleted
+            cbCompleted.setOnCheckedChangeListener { _, _ ->
+                onToggleComplete(reminder)
+            }
 
             itemView.setOnClickListener { onItemClick(reminder) }
-            cbCompleted.setOnClickListener { onToggleComplete(reminder) }
             btnDelete.setOnClickListener { onDelete(reminder) }
         }
     }

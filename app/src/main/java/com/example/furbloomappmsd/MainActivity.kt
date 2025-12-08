@@ -1,144 +1,57 @@
 package com.example.furbloomappmsd
 
-import android.content.Intent
-import android.os.Bundle
-import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.furbloomappmsd.data.PetReminderDatabase
-import com.example.furbloomappmsd.viewmodel.PetReminderViewModel
-import com.google.android.material.card.MaterialCardView
-import kotlinx.coroutines.launch
-import java.text.SimpleDateFormat
-import java.util.*
+import android.os.Bundle
+import androidx.fragment.app.Fragment
+import com.google.android.material.bottomnavigation.BottomNavigationView
+// FIXED: Import Toolbar
+import com.google.android.material.appbar.MaterialToolbar
 
 class MainActivity : AppCompatActivity() {
-
-    private lateinit var viewModel: PetReminderViewModel
-    private lateinit var adapter: ReminderAdapter
-    private lateinit var database: PetReminderDatabase
-    private lateinit var tvNextReminder: TextView
-    private lateinit var tvNextReminderTime: TextView
-    private lateinit var cardReminder: MaterialCardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        supportActionBar?.hide()
+        // FIXED: Set up the custom toolbar
+        val toolbar: MaterialToolbar = findViewById(R.id.custom_toolbar)
+        setSupportActionBar(toolbar)
 
-        database = PetReminderDatabase.getDatabase(this)
-        viewModel = ViewModelProvider(this)[PetReminderViewModel::class.java]
+        val bottomNav: BottomNavigationView = findViewById(R.id.bottom_navigation)
 
-        // Initialize views
-        cardReminder = findViewById(R.id.card_next_reminder)
-        tvNextReminder = findViewById(R.id.tv_next_reminder)
-        tvNextReminderTime = findViewById(R.id.tv_next_reminder_time)
+        // Set the initial fragment and title
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.nav_host_fragment, HomeFragment()).commit()
+            supportActionBar?.title = "Home" // Initial title
+        }
 
-        // Observe today's reminders
-        viewModel.pendingReminders.observe(this) { reminders ->
+        bottomNav.setOnItemSelectedListener { item ->
+            var selectedFragment: Fragment? = null
+            var title: String = getString(R.string.app_name) // Default title
 
-            val today = Calendar.getInstance()
-            today.set(Calendar.HOUR_OF_DAY, 0)
-            today.set(Calendar.MINUTE, 0)
-            today.set(Calendar.SECOND, 0)
-            val startOfDay = today.timeInMillis
-
-            today.set(Calendar.HOUR_OF_DAY, 23)
-            today.set(Calendar.MINUTE, 59)
-            today.set(Calendar.SECOND, 59)
-            val endOfDay = today.timeInMillis
-
-            val todayReminders = reminders.filter { it.dateTime in startOfDay..endOfDay }
-            adapter.submitList(todayReminders)
-
-            if (todayReminders.isNotEmpty()) {
-                // Show the next reminder
-                val nextReminder = todayReminders.first()
-                tvNextReminder.text = nextReminder.description
-                val timeFormat = SimpleDateFormat("'Today at' h:mm a", Locale.getDefault())
-                tvNextReminderTime.text = timeFormat.format(Date(nextReminder.dateTime))
-            } else {
-                // No reminders today → show "Done for the Day!"
-                tvNextReminder.text = "Done for the Day!"
-                tvNextReminderTime.text = ""
+            when (item.itemId) {
+                R.id.nav_home -> {
+                    selectedFragment = HomeFragment()
+                    title = "Home" // FIXED: Set title
+                }
+                R.id.nav_calendar -> {
+                    selectedFragment = CalendarFragment()
+                    title = "Calendar" // FIXED: Set title
+                }
+                R.id.nav_settings -> {
+                    selectedFragment = SettingsFragment()
+                    title = "Settings" // FIXED: Set title
+                }
             }
 
-            cardReminder.visibility = View.VISIBLE
-        }
-
-        // Setup RecyclerView for Daily List
-        val recyclerView = findViewById<RecyclerView>(R.id.recyclerView_daily_list)
-        adapter = ReminderAdapter(
-            onItemClick = { reminder ->
-                val intent = Intent(this, AddEditReminderActivity::class.java)
-                intent.putExtra("REMINDER_ID", reminder.id)
-                startActivity(intent)
-            },
-            onToggleComplete = { reminder ->
-                viewModel.toggleCompletion(reminder)
-            },
-            onDelete = { reminder ->
-                viewModel.delete(reminder)
-            }
-        )
-
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
-        viewModel.pendingReminders.observe(this) { reminders ->
-            // Filter today's reminders
-            val today = Calendar.getInstance()
-            today.set(Calendar.HOUR_OF_DAY, 0)
-            today.set(Calendar.MINUTE, 0)
-            today.set(Calendar.SECOND, 0)
-            val startOfDay = today.timeInMillis
-
-            today.set(Calendar.HOUR_OF_DAY, 23)
-            today.set(Calendar.MINUTE, 59)
-            today.set(Calendar.SECOND, 59)
-            val endOfDay = today.timeInMillis
-
-            val todayReminders = reminders.filter { it.dateTime in startOfDay..endOfDay }
-            adapter.submitList(todayReminders)
-
-            if (todayReminders.isNotEmpty()) {
-                // Show the next upcoming reminder
-                val nextReminder = todayReminders.first()
-                tvNextReminder.text = nextReminder.description
-                val timeFormat = SimpleDateFormat("'Today at' h:mm a", Locale.getDefault())
-                tvNextReminderTime.text = timeFormat.format(Date(nextReminder.dateTime))
-            } else {
-                // No reminders → show "Done for the Day!"
-                tvNextReminder.text = "✅ Done for the Day!"
-                tvNextReminderTime.text = ""
+            if (selectedFragment != null) {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.nav_host_fragment, selectedFragment).commit()
+                supportActionBar?.title = title // FIXED: Update the title
             }
 
-            // Always make the card visible
-            cardReminder.visibility = View.VISIBLE
-        }
-
-
-        // Navigation buttons
-        findViewById<MaterialCardView>(R.id.btn_my_pets).setOnClickListener {
-            startActivity(Intent(this, MyPetsActivity::class.java))
-        }
-
-        // Bottom navigation
-        findViewById<View>(R.id.nav_home).setOnClickListener {
-            // Already on home
-        }
-
-        findViewById<View>(R.id.nav_calendar).setOnClickListener {
-            startActivity(Intent(this, CalendarActivity::class.java))
-        }
-
-        findViewById<View>(R.id.nav_settings).setOnClickListener {
-            startActivity(Intent(this, RecyclingListActivity::class.java))
+            true
         }
     }
 }

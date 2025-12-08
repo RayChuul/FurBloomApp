@@ -1,91 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- FIXED: Changed to LinearLayout and added Toolbar -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="20dp">
+    android:orientation="vertical"
+    android:background="#FFF0F5">
 
-    <LinearLayout
-        android:orientation="vertical"
+    <include layout="@layout/custom_toolbar" />
+
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:paddingBottom="40dp">
+        android:layout_height="match_parent">
 
-        <!-- Photo -->
-        <ImageView
-            android:id="@+id/ivPetPhoto"
-            android:layout_width="140dp"
-            android:layout_height="140dp"
-            android:src="@drawable/ic_pet_placeholder"
-            android:scaleType="centerCrop"
-            android:background="@drawable/rounded_image_mask"
-            android:contentDescription="Pet Photo" />
-
-        <Button
-            android:id="@+id/btnChoosePhoto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Choose Photo"
-            android:layout_marginTop="10dp" />
-
-        <!-- Name (Required) -->
-        <EditText
-            android:id="@+id/etPetName"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Pet Name *"
-            android:layout_marginTop="20dp" />
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:paddingBottom="40dp">
 
-        <!-- Age -->
-        <EditText
-            android:id="@+id/etPetAge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Age (Optional)"
-            android:inputType="number" />
+            <!-- Photo -->
+            <ImageView
+                android:id="@+id/ivPetPhoto"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:background="@drawable/rounded_image_mask"
+                android:contentDescription="Pet Photo"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_pet_placeholder" />
 
-        <!-- Species -->
-        <EditText
-            android:id="@+id/etPetSpecies"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Species (Dog, Cat...)"
-            android:layout_marginTop="10dp" />
+            <Button
+                android:id="@+id/btnChoosePhoto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="Choose Photo" />
 
-        <!-- Gender -->
-        <EditText
-            android:id="@+id/etPetGender"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Gender"
-            android:layout_marginTop="10dp" />
+            <!-- Name (Required) -->
+            <EditText
+                android:id="@+id/etPetName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:hint="Pet Name *" />
 
-        <!-- Medical History -->
-        <EditText
-            android:id="@+id/etMedicalHistory"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Medical History"
-            android:minLines="3"
-            android:gravity="top"
-            android:layout_marginTop="10dp" />
+            <!-- Age -->
+            <EditText
+                android:id="@+id/etPetAge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Age (Optional)"
+                android:inputType="number" />
 
-        <!-- Notes -->
-        <EditText
-            android:id="@+id/etNotes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Notes"
-            android:minLines="3"
-            android:gravity="top"
-            android:layout_marginTop="10dp" />
+            <!-- Species -->
+            <EditText
+                android:id="@+id/etPetSpecies"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Species (Dog, Cat...)" />
 
-        <Button
-            android:id="@+id/btnSavePet"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Save Pet"
-            android:layout_marginTop="20dp" />
+            <!-- Gender -->
+            <EditText
+                android:id="@+id/etPetGender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="Gender" />
 
-    </LinearLayout>
-</ScrollView>
+            <!-- Medical History -->
+            <EditText
+                android:id="@+id/etMedicalHistory"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="top"
+                android:hint="Medical History"
+                android:minLines="3" />
+
+            <!-- Notes -->
+            <EditText
+                android:id="@+id/etNotes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="top"
+                android:hint="Notes"
+                android:minLines="3" />
+
+            <Button
+                android:id="@+id/btnSavePet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="Save Pet" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

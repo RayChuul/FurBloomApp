@@ -18,7 +18,7 @@
         android:theme="@style/Theme.FurBloomAppMSD"
         tools:targetApi="31">
 
-        <!-- Main Activity (List Screen) -->
+        <!-- Activities... -->
         <activity
             android:name=".MainActivity"
             android:exported="true"
@@ -29,36 +29,35 @@
             </intent-filter>
         </activity>
 
-        <!-- Add/Edit Reminder Activity (Input Screen) -->
         <activity
             android:name=".AddEditReminderActivity"
             android:parentActivityName=".MainActivity"
             android:exported="false" />
 
-        <!-- Recycling List Activity (Completed Reminders) -->
         <activity
             android:name=".RecyclingListActivity"
             android:parentActivityName=".MainActivity"
             android:exported="false" />
 
-        <!-- Settings Activity (Extra Screen with Camera) -->
         <activity
             android:name=".SettingsActivity"
             android:parentActivityName=".MainActivity"
             android:exported="false" />
 
-        <!-- Pets List Activity -->
         <activity
             android:name=".MyPetsActivity"
             android:parentActivityName=".MainActivity"
             android:exported="false" />
 
-        <!-- Add Pet Activity -->
         <activity android:name=".ui.AddPetActivity" />
+
+        <activity
+            android:name=".ui.EditPetActivity"
+            android:parentActivityName=".MyPetsActivity" />
 
         <!-- ADD THIS ACTIVITY DECLARATION -->
         <activity
-            android:name=".ui.EditPetActivity"
+            android:name=".PetDetailActivity"
             android:parentActivityName=".MyPetsActivity" />
 
     </application>

@@ -1,26 +1,32 @@
 package com.example.furbloomappmsd.ui
 
+import android.Manifest
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
-import com.example.furbloomappmsd.R
-
-import android.graphics.Bitmap
+import android.content.pm.PackageManager
+import android.graphics.Bitmap // Import Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
-import com.example.furbloomappmsd.data.Pet
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity // FIXED: Only one import remains
+import androidx.core.content.ContextCompat
 import com.example.furbloomappmsd.PetApplication
-import com.example.furbloomappmsd.ui.PetViewModel
-import com.example.furbloomappmsd.ui.PetViewModelFactory
-import java.io.ByteArrayOutputStream
+import com.example.furbloomappmsd.R
+import com.example.furbloomappmsd.data.Pet
+import com.google.android.material.appbar.MaterialToolbar
 import java.io.File
 import java.io.FileOutputStream
+import java.io.OutputStream
 
 class AddPetActivity : AppCompatActivity() {
 
@@ -33,18 +39,56 @@ class AddPetActivity : AppCompatActivity() {
     private lateinit var etNotes: EditText
     private lateinit var btnChoosePhoto: Button
     private lateinit var btnSave: Button
-
     private var photoUri: String? = null
 
     private val viewModel: PetViewModel by viewModels {
-        PetViewModelFactory((application as PetApplication).repository)
+        PetViewModelFactory((application as PetApplication).petRepository)
     }
 
-    private val PICK_IMAGE = 100
+    private val requestPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                launchCamera()
+            } else {
+                Toast.makeText(this, "Camera permission is required.", Toast.LENGTH_LONG).show()
+            }
+        }
+
+    private val galleryLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.data?.let { uri ->
+                ivPetPhoto.setImageURI(uri)
+                photoUri = uri.toString()
+            }
+        }
+    }
+
+    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val imageUri = result.data?.data
+            if (imageUri != null) {
+                ivPetPhoto.setImageURI(imageUri)
+                photoUri = imageUri.toString()
+            } else {
+                // FIXED: Handle bitmap saving correctly
+                val bitmap = result.data?.extras?.get("data") as? Bitmap
+                bitmap?.let {
+                    ivPetPhoto.setImageBitmap(it)
+                    // Save the bitmap to a file and get its URI so it can be saved
+                    photoUri = saveBitmapAndGetUri(it).toString()
+                }
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_pet)
+
+        val toolbar: MaterialToolbar = findViewById(R.id.custom_toolbar)
+        setSupportActionBar(toolbar)
+        supportActionBar?.title = "Add a New Pet"
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         ivPetPhoto = findViewById(R.id.ivPetPhoto)
         etName = findViewById(R.id.etPetName)
@@ -57,47 +101,107 @@ class AddPetActivity : AppCompatActivity() {
         btnSave = findViewById(R.id.btnSavePet)
 
         btnChoosePhoto.setOnClickListener {
-            val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-            startActivityForResult(gallery, PICK_IMAGE)
+            showImageSourceDialog()
         }
 
         btnSave.setOnClickListener {
-            val name = etName.text.toString().trim()
-            if (name.isEmpty()) {
-                Toast.makeText(this, "Pet name is required", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            val age = etAge.text.toString().toIntOrNull()
-            val species = etSpecies.text.toString().trim()
-            val gender = etGender.text.toString().trim()
-            val medicalHistory = etMedicalHistory.text.toString().trim()
-            val notes = etNotes.text.toString().trim()
-
-            val pet = Pet(
-                name = name,
-                age = age,
-                species = if (species.isEmpty()) null else species,
-                gender = if (gender.isEmpty()) null else gender,
-                medicalHistory = if (medicalHistory.isEmpty()) null else medicalHistory,
-                notes = if (notes.isEmpty()) null else notes,
-                photoUri = photoUri
-            )
-
-            viewModel.addPet(pet)
-            Toast.makeText(this, "Pet saved!", Toast.LENGTH_SHORT).show()
-            finish()
+            savePet()
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
-            val imageUri: Uri? = data?.data
-            imageUri?.let {
-                ivPetPhoto.setImageURI(it)
-                photoUri = it.toString()
+    override fun onSupportNavigateUp(): Boolean {
+        onBackPressed()
+        return true
+    }
+
+    private fun showImageSourceDialog() {
+        val options = arrayOf("Choose from Gallery", "Open Camera")
+        AlertDialog.Builder(this)
+            .setTitle("Choose a photo")
+            .setItems(options) { _, which ->
+                when (which) {
+                    0 -> {
+                        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                        galleryLauncher.launch(galleryIntent)
+                    }
+                    1 -> {
+                        checkCameraPermissionAndLaunch()
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun checkCameraPermissionAndLaunch() {
+        when {
+            ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED -> {
+                launchCamera()
+            }
+            else -> {
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
             }
         }
+    }
+
+    private fun launchCamera() {
+        val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        cameraLauncher.launch(cameraIntent)
+    }
+
+    // FIXED: Added this helper function to save bitmaps, just like in EditPetActivity
+    private fun saveBitmapAndGetUri(bitmap: Bitmap): Uri? {
+        val filename = "pet_${System.currentTimeMillis()}.jpg"
+        var fos: OutputStream? = null
+        var imageUri: Uri? = null
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            contentResolver?.also { resolver ->
+                val contentValues = ContentValues().apply {
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                }
+                imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+                fos = imageUri?.let { resolver.openOutputStream(it) }
+            }
+        } else {
+            val imagesDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val image = File(imagesDir, filename)
+            fos = FileOutputStream(image)
+            imageUri = Uri.fromFile(image)
+        }
+
+        fos?.use {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+        }
+        return imageUri
+    }
+
+    private fun savePet() {
+        val name = etName.text.toString().trim()
+        if (name.isEmpty()) {
+            Toast.makeText(this, "Pet name is required", Toast.LENGTH_SHORT).show()
+            return
+        }
+        val age = etAge.text.toString().toIntOrNull()
+        val species = etSpecies.text.toString().trim()
+        val gender = etGender.text.toString().trim()
+        val medicalHistory = etMedicalHistory.text.toString().trim()
+        val notes = etNotes.text.toString().trim()
+
+        val pet = Pet(
+            name = name,
+            age = age,
+            species = if (species.isEmpty()) null else species,
+            gender = if (gender.isEmpty()) null else gender,
+            medicalHistory = if (medicalHistory.isEmpty()) null else medicalHistory,
+            notes = if (notes.isEmpty()) null else notes,
+            photoUri = photoUri // This now correctly holds the URI from both gallery and camera
+        )
+
+        viewModel.addPet(pet)
+        Toast.makeText(this, "Pet saved!", Toast.LENGTH_SHORT).show()
+        finish()
     }
 }

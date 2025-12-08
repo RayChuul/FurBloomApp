@@ -1,63 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView
+<!-- FIXED: Complete Makeover for the Pet Card --><com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:minHeight="180dp"
     android:layout_margin="8dp"
     app:cardCornerRadius="24dp"
-    app:cardElevation="6dp"
-    app:strokeWidth="1dp"
-    app:strokeColor="@color/black"
+    app:cardElevation="4dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:strokeWidth="0dp"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground">
 
+    <!-- Using a RelativeLayout allows us to place the photo inside the circular frame -->
     <RelativeLayout
+        android:id="@+id/pet_info_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp">
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:padding="12dp">
 
-        <LinearLayout
-            android:id="@+id/pet_info_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:padding="12dp">
+        <!-- This is the background frame -->
+        <View
+            android:id="@+id/image_frame"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/circular_image_frame" />
+
+        <!-- The actual pet photo, placed on top of the frame -->
+        <!-- Note: We use a CardView to easily clip the image into a circle -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_alignTop="@id/image_frame"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="5dp"
+            app:cardCornerRadius="50dp"
+            app:cardElevation="0dp">
 
             <ImageView
                 android:id="@+id/iv_pet_image"
-                android:layout_width="120dp"
-                android:layout_height="120dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/ic_pet_placeholder"
-                android:layout_marginBottom="10dp"
-                android:background="@drawable/rounded_image_mask"
-                android:clipToOutline="true"/>
+                android:src="@drawable/ic_pet_placeholder" />
 
-            <TextView
-                android:id="@+id/tv_pet_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Pet Name"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/black"
-                android:gravity="center"/>
-        </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
-        <!-- ADD THIS OPTIONS BUTTON -->
-        <ImageButton
-            android:id="@+id/btn_pet_options"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Pet Options"
-            android:src="@drawable/ic_more_vert" />
-        <!-- Note: You'll need to add this 'ic_more_vert' drawable -->
+        <!-- The pet's name, positioned below the image frame -->
+        <TextView
+            android:id="@+id/tv_pet_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/image_frame"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+            android:text="Pet Name"
+            android:textColor="#5D4037"
+            android:textSize="18sp"
+            android:textStyle="bold" />
 
     </RelativeLayout>
+
 </com.google.android.material.card.MaterialCardView>

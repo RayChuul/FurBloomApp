@@ -1,52 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- FIXED: Changed to RelativeLayout and added Toolbar -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="#FFF0F5">
 
-    <!-- Pet Image -->
-    <ImageView
-        android:id="@+id/iv_pet_image"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/ic_pet_placeholder"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:background="@drawable/rounded_image_mask"
-        android:clipToOutline="true"/>
+    <include layout="@layout/custom_toolbar" />
 
-    <!-- Pet Name -->
     <TextView
-        android:id="@+id/tv_pet_name"
+        android:id="@+id/tv_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Pet Name"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_below="@id/iv_pet_image"
+        android:layout_below="@id/custom_toolbar"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="12dp"/>
+        android:layout_marginTop="16dp"
+        android:text="Reminders for PetName"
+        android:textColor="@color/black"
+        android:textSize="28sp"
+        android:textStyle="bold" />
 
-    <!-- RecyclerView for Reminders -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView_reminders"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tv_pet_name"
+        android:layout_below="@id/tv_header"
         android:layout_marginTop="16dp"
         android:clipToPadding="false"
-        android:paddingBottom="80dp"/>
+        android:paddingBottom="80dp" />
 
-    <!-- Floating Action Button -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab_options"
+        android:id="@+id/fab_add_reminder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_margin="16dp"
-        app:backgroundTint="@color/purple_500"/>
+        android:contentDescription="Add new reminder"
+        android:src="@drawable/ic_add"
+        app:backgroundTint="@color/purple_500" />
 </RelativeLayout>

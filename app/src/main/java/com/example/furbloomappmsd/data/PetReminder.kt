@@ -1,17 +1,25 @@
 package com.example.furbloomappmsd.data
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
-
-@Entity(tableName = "pet_reminders")
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey@Entity(
+    tableName = "pet_reminders",
+    foreignKeys = [ForeignKey(
+        entity = Pet::class,
+        parentColumns = ["id"],
+        childColumns = ["petId"],
+        onDelete = ForeignKey.CASCADE
+    )]
+)
 data class PetReminder(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
+    val petId: Int,
     val petName: String,
-    val reminderType: String, // e.g., "Feeding", "Medication", "Vet Visit", "Grooming"
+    val reminderType: String,
     val description: String,
-    val dateTime: Long, // Store as timestamp
-    val isCompleted: Boolean = false,
-    val priority: String = "Medium", // "Low", "Medium", "High"
-    val notes: String = ""
+    val dateTime: Long,
+    var isCompleted: Boolean = false,
+    val notes: String = "",
+    val repeat: String = "None" // FIXED: Add 'repeat' field with a default value
 )

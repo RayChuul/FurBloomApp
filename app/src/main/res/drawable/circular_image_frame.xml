@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+
+    <!-- This is the background color of the frame itself -->
+    <solid android:color="#F3E5F5" />
+
+    <!-- This adds a slightly darker border around the frame for definition -->
+    <stroke
+        android:width="2dp"
+        android:color="#E1BEE7" />
+
+</shape>

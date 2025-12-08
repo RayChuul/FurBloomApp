@@ -1,58 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- FIXED: Complete Makeover for the Reminder Item Card -->
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="4dp">
+    android:layout_marginStart="12dp"
+    android:layout_marginEnd="12dp"
+    android:layout_marginTop="6dp"
+    android:layout_marginBottom="6dp"
+    app:cardCornerRadius="22dp"
+    app:cardElevation="3dp"
+    app:strokeWidth="0dp"
+    app:cardBackgroundColor="@color/white">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp"
+        android:padding="12dp"
         android:gravity="center_vertical">
 
+        <!-- A themed CheckBox -->
         <CheckBox
             android:id="@+id/cb_completed"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:theme="@style/CuteCheckBox"
             android:focusable="false"
             android:focusableInTouchMode="false"/>
 
+        <!-- Vertical Divider -->
+        <View
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="12dp"
+            android:background="#F1F1F1" />
+
+        <!-- Text content area -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:orientation="vertical"
-            android:paddingStart="12dp">
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/tv_reminder_description"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Walk Teddy"
-                android:textSize="16sp"
-                android:textColor="@android:color/black"
+                android:textSize="17sp"
+                android:textColor="#3E2723"
                 android:textStyle="bold"/>
 
             <TextView
                 android:id="@+id/tv_reminder_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:text="Today at 6:00 PM"
                 android:textSize="14sp"
-                android:textColor="@android:color/darker_gray"/>
+                android:textColor="#A1887F"/>
         </LinearLayout>
 
+        <!-- Delete button with better spacing -->
         <ImageButton
             android:id="@+id/btn_delete"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="8dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:src="@drawable/ic_delete"
-            android:contentDescription="Delete"/>
+            android:contentDescription="Delete"
+            app:tint="#D1A6D8" />
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>

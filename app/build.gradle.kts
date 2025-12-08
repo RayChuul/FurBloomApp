@@ -44,10 +44,15 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    // Note: You have duplicate activity dependencies, I'll clean this up.
+
+    // General KTX libraries
     implementation("androidx.activity:activity-ktx:1.8.0")
-// required for viewModels()
+    implementation("androidx.fragment:fragment-ktx:1.8.0") // required for viewModels()
+
+    // Third-party libraries
+    implementation("com.applandeo:material-calendar-view:1.9.2")
 
     // Room Database
     implementation(libs.androidx.room.runtime)
