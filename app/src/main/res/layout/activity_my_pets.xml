@@ -17,6 +17,6 @@
         android:clipToPadding="false"
         android:padding="8dp" />
 
-    <!-- FIXED: The redundant FloatingActionButton that was causing the crash has been completely removed. -->
+
 
 </RelativeLayout>

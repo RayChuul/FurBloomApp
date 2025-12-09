@@ -8,7 +8,6 @@ data class Pet(
     @PrimaryKey(autoGenerate = true)val id: Int = 0,
 
     val name: String,
-    // FIXED: Changed 'age' to 'birthDate' to store a timestamp
     val birthDate: Long? = null,
     val species: String? = null,
     val gender: String? = null,

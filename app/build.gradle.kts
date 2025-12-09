@@ -8,13 +8,13 @@ android {
     namespace = "com.example.furbloomappmsd"
     compileSdk = 36
 
-    // FIXED: Added the missing line break between compileSdk and defaultConfig
+
     defaultConfig {
         applicationId = "com.example.furbloomappmsd"
         minSdk = 24
         targetSdk = 36
 
-        // The version code must match the latest database version.
+
         versionCode = 3
         versionName = "1.2"
 
@@ -42,7 +42,7 @@ android {
 }
 
 dependencies {
-    // ... (rest of the file is unchanged) ...
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)

@@ -21,7 +21,7 @@
         android:gravity="center"
         android:padding="12dp">
 
-        <!-- FIXED: The plus icon is now placed inside a circular frame to match the pet items -->
+        <!-- The plus icon is now placed inside a circular frame to match the pet items -->
         <FrameLayout
             android:layout_width="110dp"
             android:layout_height="110dp"

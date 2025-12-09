@@ -36,7 +36,7 @@
             android:text="Set Time" />
     </LinearLayout>
 
-    <!-- FIXED: Add a Spinner for repeat options -->
+    <!-- Add a Spinner for repeat options -->
     <Spinner
         android:id="@+id/spinner_repeat"
         android:layout_width="match_parent"

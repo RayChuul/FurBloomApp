@@ -39,8 +39,7 @@ class AddPetActivity : AppCompatActivity() {
 
     private lateinit var ivPetPhoto: ImageView
     private lateinit var etName: EditText
-    // === THE CRITICAL FIX ===
-    // The layout uses a TextView for this button now. This must be a TextView.
+
     private lateinit var btnSetBirthDate: TextView
     private lateinit var etSpecies: EditText
     private lateinit var spinnerGender: Spinner
@@ -100,7 +99,7 @@ class AddPetActivity : AppCompatActivity() {
 
         ivPetPhoto = findViewById(R.id.ivPetPhoto)
         etName = findViewById(R.id.etPetName)
-        btnSetBirthDate = findViewById(R.id.btnSetBirthDate) // This now correctly finds the TextView
+        btnSetBirthDate = findViewById(R.id.btnSetBirthDate)
         etSpecies = findViewById(R.id.etPetSpecies)
         spinnerGender = findViewById(R.id.spinnerPetGender)
         etMedicalHistory = findViewById(R.id.etMedicalHistory)

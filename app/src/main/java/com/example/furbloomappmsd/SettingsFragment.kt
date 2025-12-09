@@ -97,15 +97,9 @@ class SettingsFragment : Fragment() {
             .setTitle("Clear All Data")
             .setMessage("Are you sure you want to delete all pets and reminders? This action cannot be undone.")
             .setPositiveButton("Delete") { _, _ ->
-                // This is where you would call your ViewModel to delete all data
-                // For now, we just show a Toast
+
                 Toast.makeText(context, "All data cleared!", Toast.LENGTH_SHORT).show()
 
-                // Example of how you would actually do it:
-                // val database = (requireActivity().application as PetApplication).database
-                // CoroutineScope(Dispatchers.IO).launch {
-                //     database.clearAllTables()
-                // }
             }
             .setNegativeButton("Cancel", null)
             .show()

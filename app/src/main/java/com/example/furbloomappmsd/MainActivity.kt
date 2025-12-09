@@ -12,9 +12,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // FIXED: The ID 'custom_toolbar' belongs to the MaterialToolbar *inside* the included layout.
-        // The original findViewById call was correct, and this ensures it finds the toolbar.
-        // This was the root cause of the crash on launch.
         val toolbar: MaterialToolbar = findViewById(R.id.custom_toolbar)
         setSupportActionBar(toolbar)
 

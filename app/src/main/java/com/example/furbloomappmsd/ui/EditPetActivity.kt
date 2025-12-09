@@ -41,8 +41,7 @@ class EditPetActivity : AppCompatActivity() {
 
     private lateinit var ivPetPhoto: ImageView
     private lateinit var etName: EditText
-    // === THE CRITICAL FIX ===
-    // The layout uses a TextView for this button now. This must be a TextView.
+
     private lateinit var btnSetBirthDate: TextView
     private lateinit var etSpecies: EditText
     private lateinit var spinnerGender: Spinner
@@ -98,7 +97,7 @@ class EditPetActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_pet) // This correctly uses the same layout
+        setContentView(R.layout.activity_add_pet)
 
         val toolbar: MaterialToolbar = findViewById(R.id.custom_toolbar)
         setSupportActionBar(toolbar)
@@ -107,7 +106,7 @@ class EditPetActivity : AppCompatActivity() {
 
         ivPetPhoto = findViewById(R.id.ivPetPhoto)
         etName = findViewById(R.id.etPetName)
-        btnSetBirthDate = findViewById(R.id.btnSetBirthDate) // This now correctly finds the TextView
+        btnSetBirthDate = findViewById(R.id.btnSetBirthDate)
         etSpecies = findViewById(R.id.etPetSpecies)
         spinnerGender = findViewById(R.id.spinnerPetGender)
         etMedicalHistory = findViewById(R.id.etMedicalHistory)
@@ -130,7 +129,7 @@ class EditPetActivity : AppCompatActivity() {
 
         viewModel.getPetById(petId).observe(this, Observer { pet ->
             pet?.let {
-                if (currentPet == null) { // Only populate once to avoid overwriting user changes
+                if (currentPet == null) {
                     currentPet = it
                     populateUI(it)
                 }

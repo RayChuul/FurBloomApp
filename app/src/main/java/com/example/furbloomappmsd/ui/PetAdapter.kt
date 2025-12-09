@@ -18,7 +18,7 @@ class PetAdapter(
 
     private var pets: List<Pet> = emptyList()
 
-    // FIXED: Moved the view type constants into a companion object.
+
     companion object {
         private const val PET_VIEW_TYPE = 1
         private const val ADD_BUTTON_VIEW_TYPE = 2
@@ -65,7 +65,7 @@ class PetAdapter(
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.pet_item, parent, false)
             PetViewHolder(view)
-        } else { // ADD_BUTTON_VIEW_TYPE
+        } else {
             val view = LayoutInflater.from(parent.context)
                 .inflate(R.layout.pet_add_item, parent, false)
             AddPetViewHolder(view)

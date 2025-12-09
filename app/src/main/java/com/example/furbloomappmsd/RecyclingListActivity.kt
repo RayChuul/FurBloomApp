@@ -22,7 +22,7 @@ class RecyclingListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_recycling_list)
 
-        // FIXED: Set up the custom toolbar
+        // Set up the custom toolbar
         val toolbar: MaterialToolbar = findViewById(R.id.custom_toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.title = "Completed Reminders"
@@ -30,7 +30,7 @@ class RecyclingListActivity : AppCompatActivity() {
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView_recycling)
         adapter = ReminderAdapter(
-            onItemClick = { /* Optional: Open for viewing */ },
+            onItemClick = {  },
             onToggleComplete = { reminder ->
                 viewModel.update(reminder.copy(isCompleted = !reminder.isCompleted))
             },
@@ -48,7 +48,7 @@ class RecyclingListActivity : AppCompatActivity() {
         })
     }
 
-    // FIXED: Added this function to make the back arrow work
+    // Added this function to make the back arrow work
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true

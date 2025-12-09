@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- FIXED: Replaced TextView with the CalendarView -->
+    <!-- Replaced TextView with the CalendarView -->
     <com.applandeo.materialcalendarview.CalendarView
         android:id="@+id/calendarView"
         android:layout_width="match_parent"

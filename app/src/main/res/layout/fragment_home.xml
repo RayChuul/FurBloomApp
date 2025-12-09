@@ -26,7 +26,7 @@
         android:paddingTop="8dp"
         android:paddingBottom="8dp"/>
 
-    <!-- FIXED: Replaced the old Button with a styled MaterialButton -->
+    <!--Replaced the old Button with a styled MaterialButton -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_my_pets"
         android:layout_width="match_parent"

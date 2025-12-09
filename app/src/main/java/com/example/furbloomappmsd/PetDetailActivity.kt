@@ -75,7 +75,7 @@ class PetDetailActivity : AppCompatActivity() {
         fabOptions = findViewById(R.id.fab_options)
         recyclerViewReminders = findViewById(R.id.recyclerView_pet_reminders)
 
-        // FIXED: Change FAB icon to be more descriptive
+        // Changed FAB icon to be more descriptive
         fabOptions.setImageResource(R.drawable.ic_more_vert)
 
         petId = intent.getIntExtra("PET_ID", -1)
@@ -119,7 +119,7 @@ class PetDetailActivity : AppCompatActivity() {
         } ?: ivPetPhoto.setImageResource(R.drawable.ic_pet_placeholder)
     }
 
-    // FIXED: Add a helper function to calculate age
+    // Added a helper function to calculate age
     private fun getAgeString(birthDate: Long): String {
         val today = Calendar.getInstance()
         val birth = Calendar.getInstance().apply { timeInMillis = birthDate }
@@ -155,7 +155,7 @@ class PetDetailActivity : AppCompatActivity() {
     private fun setupReminderRecyclerView() {
         reminderAdapter = ReminderAdapter(
             showPetName = false,
-            // FIXED: Clicking a reminder now opens the edit dialog
+            // Clicking a reminder now opens the edit dialog
             onItemClick = { reminder ->
                 currentPet?.let { showAddEditReminderDialog(it, reminder) }
             },
@@ -188,7 +188,7 @@ class PetDetailActivity : AppCompatActivity() {
                     startActivity(intent)
                     true
                 }
-                // FIXED: "Add Reminder" now directly opens the dialog
+                //"Add Reminder" now directly opens the dialog
                 R.id.menu_add_reminder -> {
                     showAddEditReminderDialog(pet, null)
                     true
@@ -215,8 +215,6 @@ class PetDetailActivity : AppCompatActivity() {
             .setNegativeButton("Cancel", null)
             .show()
     }
-
-    // FIXED: Moved the dialog logic here from AddEditReminderActivity
     private fun showAddEditReminderDialog(pet: Pet, existingReminder: PetReminder?) {
         val dialogView = layoutInflater.inflate(R.layout.dialog_add_reminder, null)
         val etReminderDescription = dialogView.findViewById<EditText>(R.id.et_reminder_description)

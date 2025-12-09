@@ -19,7 +19,6 @@ class PetRepository(private val petDao: PetDao) {
         petDao.updatePet(pet)
     }
 
-    // ADD THIS FUNCTION
     suspend fun deletePet(pet: Pet) {
         petDao.deletePet(pet)
     }

@@ -10,11 +10,11 @@ interface PetReminderDao {
     @Query("SELECT * FROM pet_reminders ORDER BY dateTime ASC")
     fun getAllReminders(): LiveData<List<PetReminder>>
 
-    // Get only pending reminders (not completed), ordered by time
+
     @Query("SELECT * FROM pet_reminders WHERE isCompleted = 0 ORDER BY dateTime ASC")
     fun getPendingReminders(): LiveData<List<PetReminder>>
 
-    // NEW: Get all reminders for a specific pet
+
     @Query("SELECT * FROM pet_reminders WHERE petId = :petId ORDER BY dateTime ASC")
     fun getRemindersForPet(petId: Int): LiveData<List<PetReminder>>
 

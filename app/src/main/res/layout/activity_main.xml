@@ -4,10 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!--
-        FIXED: The ID was 'main_toolbar', but MainActivity.kt was looking for 'custom_toolbar'.
-        This ID mismatch was the root cause of the crash. It is now corrected.
-    -->
     <include
         android:id="@+id/custom_toolbar"
         layout="@layout/custom_toolbar" />

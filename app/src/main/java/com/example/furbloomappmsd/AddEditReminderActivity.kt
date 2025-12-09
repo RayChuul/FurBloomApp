@@ -74,9 +74,9 @@ class AddEditReminderActivity : AppCompatActivity() {
     }
 
     private fun setupRecyclerView() {
-        // FIXED: The adapter initialization now correctly includes the 'showPetName' parameter.
+
         reminderAdapter = ReminderAdapter(
-            showPetName = false, // Since we are on a pet-specific screen, we don't need to show the name again.
+            showPetName = false,
             onItemClick = { reminder ->
                 showAddEditReminderDialog(reminder)
             },
